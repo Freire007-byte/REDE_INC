@@ -1,5 +1,17 @@
+cat << 'EOF' > vercel.json
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/servidor.py" }]
+  "devCommand": "python3 servidor.py",
+  "builds": [
+    {
+      "src": "servidor.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "servidor.py"
+    }
+  ]
 }
-EOF 
-eof
+EOF
