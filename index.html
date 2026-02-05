@@ -3,67 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REDE INC.io | QUANTUM CITY</title>
+    <title>REDE INC.io | QUANTUM PORTAL</title>
     <style>
-        :root { --blue: #80ebff; --green: #39ff14; --dark: #0a0c10; }
-        body { background: var(--dark); color: #fff; font-family: "Segoe UI", sans-serif; margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        
-        /* Fundo da Cidade Futurista em CSS */
-        .city-bg { position: fixed; width: 100%; height: 100%; z-index: 1; background: linear-gradient(to bottom, #001525 0%, #0a0c10 100%); }
-        .tower { position: absolute; bottom: 0; width: 80px; height: 70vh; background: linear-gradient(to top, #050505, #102030); border-top: 2px solid var(--blue); box-shadow: 0 0 30px rgba(0,212,255,0.2); }
-        .tower.left { left: 5%; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); }
-        .tower.right { right: 5%; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); }
-        
-        /* O Grande Anel da Imagem */
-        .ring-container { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; }
-        .main-ring { width: 450px; height: 450px; border: 15px solid rgba(128, 235, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 100px rgba(0, 212, 255, 0.1); border-top: 15px solid var(--blue); border-bottom: 15px solid var(--blue); animation: spin 10s linear infinite; }
+        :root { --blue: #80ebff; --green: #39ff14; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: #000 url("https://r.jina.ai/i/54056247754d8004b772f9f1f0a28f8f") no-repeat center center fixed; 
+            background-size: cover; 
+            font-family: "Segoe UI", sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden;
+        }
 
-        /* Painel Central Flutuante */
-        .glass-panel { position: absolute; width: 320px; padding: 25px; background: rgba(0, 20, 40, 0.8); border: 1px solid var(--blue); border-radius: 5px; backdrop-filter: blur(15px); text-align: center; box-shadow: 0 0 40px rgba(0, 212, 255, 0.5); z-index: 20; }
-        .formula { font-family: "Courier New", monospace; color: #fff; font-size: 1.2em; margin: 15px 0; }
+        /* Camada de Vidro para os Dados */
+        .glass-ui {
+            background: rgba(0, 15, 25, 0.7);
+            border: 1px solid var(--blue);
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.3);
+            z-index: 10;
+        }
+
+        .saldo { font-size: 2.5em; font-weight: bold; color: #fff; text-shadow: 0 0 20px var(--blue); margin: 10px 0; }
+        .formula { font-family: "Courier New", monospace; color: var(--green); font-size: 0.9em; margin-bottom: 15px; }
+        .stats { font-size: 0.7em; color: var(--blue); display: flex; justify-content: space-around; border-top: 1px solid rgba(128,235,255,0.2); padding-top: 10px; }
         
-        /* Dados da Base da Imagem */
-        .stats-footer { position: absolute; bottom: -80px; width: 100%; display: flex; justify-content: space-around; }
-        .stat-item { text-align: center; }
-        .stat-val { display: block; font-size: 1.2em; font-weight: bold; }
-        .tps { color: var(--green); text-shadow: 0 0 10px var(--green); }
-        .bytes { color: var(--blue); text-shadow: 0 0 10px var(--blue); }
-
-        .header-text { position: absolute; top: -120px; width: 500px; text-align: center; }
-        .header-text h1 { font-size: 1em; letter-spacing: 2px; margin: 0; color: #fff; }
-        .header-text p { font-size: 0.7em; color: var(--blue); }
-
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* Botão do Manifesto Integrado */
+        .manifesto-btn {
+            margin-top: 20px;
+            background: none;
+            border: 1px solid var(--green);
+            color: var(--green);
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.7em;
+            letter-spacing: 2px;
+        }
     </style>
 </head>
 <body>
-    <div class="city-bg">
-        <div class="tower left"></div>
-        <div class="tower right"></div>
-    </div>
 
-    <div class="ring-container">
-        <div class="header-text">
-            <h1>OFFIONOUNEMENT: REDE INC.io - DIGITAL LIBERATION</h1>
-            <p>Qquiteto & Criador: Alexandre Freire</p>
+    <div class="glass-ui">
+        <div style="font-size: 0.6em; letter-spacing: 3px; opacity: 0.8;">REDE INC CORE V4</div>
+        <div class="formula">f(x) = ∑ 1-ⁿ aᵢ xᵢ mod(√q)</div>
+        <div class="saldo" id="saldo">0.00 INC</div>
+        
+        <div class="stats">
+            <span>LATÊNCIA: <b id="lat">0ms</b></span>
+            <span>ACESSOS: <b id="vis">28514</b></span>
         </div>
 
-        <div class="main-ring"></div>
-
-        <div class="glass-panel">
-            <div style="font-size: 0.6em; color: var(--green);"># REDE_INC_CORE_V4_STABLE</div>
-            <div class="formula">f(x) = ∑ 1-ⁿ aᵢ xᵢ mod(√q)</div>
-            <div style="font-size: 0.55em; color: #80ebff; line-height: 1.6;">
-                > SCANNING CORE... STATUS: SOVEREIGN<br>
-                > LATENCY: <span id="lat">0ms</span> | VIS: <span id="vis">28514</span>
-            </div>
-            <div style="font-size: 1.8em; font-weight: bold; margin-top: 15px;" id="saldo">0.00 INC</div>
-        </div>
-
-        <div class="stats-footer">
-            <div class="stat-item"><span class="stat-val tps">5000 TPS</span></div>
-            <div class="stat-item"><span class="stat-val bytes">2500 BYTES</span></div>
-        </div>
+        <button class="manifesto-btn" onclick="alert(\"MANIFESTO: A Soberania Digital através do tempo. Arquiteto Alexandre Freire.\")">LER MANIFESTO</button>
     </div>
 
     <script>
