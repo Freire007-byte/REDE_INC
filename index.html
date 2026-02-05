@@ -3,69 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REDE INC.io | QUANTUM CORE</title>
+    <title>REDE INC.io | QUANTUM PORTAL</title>
     <style>
-        :root { --blue: #80ebff; --green: #39ff14; --bg: #000; }
-        body { background: var(--bg); color: var(--blue); font-family: "Courier New", monospace; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        #canvas-bots { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.4; }
-
-        .quantum-ring { position: relative; z-index: 10; width: 90%; max-width: 500px; padding: 40px; border: 1px solid rgba(128, 235, 255, 0.3); border-radius: 50%; background: radial-gradient(circle, rgba(10,10,10,0.9) 0%, transparent 100%); text-align: center; box-shadow: 0 0 100px rgba(0,212,255,0.1); }
-
-        .saldo-box { font-size: 3em; font-weight: bold; margin: 20px 0; text-shadow: 0 0 20px var(--blue); }
+        :root { --blue: #80ebff; --green: #39ff14; --gold: #ffd700; }
+        body { background: #000; color: #fff; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         
-        /* CÓDIGO EM DESTAQUE - PAINEL HOLOGRÁFICO */
-        .code-core { background: rgba(0, 40, 60, 0.3); border: 1px solid var(--blue); padding: 15px; border-radius: 10px; font-size: 0.65em; color: var(--green); margin: 20px 0; box-shadow: inset 0 0 15px var(--blue); position: relative; overflow: hidden; }
-        .code-core::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 2px; background: var(--blue); animation: scan 3s linear infinite; }
+        /* Fundo Dinâmico (Cidade e Bots) */
+        #canvas-bots { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.5; }
+        
+        .portal-container { position: relative; z-index: 10; width: 100%; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(0, 50, 80, 0.4) 0%, transparent 70%); }
 
-        /* MANIFESTO INTERATIVO */
-        #manifesto-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .manifesto-box { width: 80%; max-width: 600px; padding: 40px; border: 1px solid var(--green); color: #fff; text-align: left; }
-        .manifesto-box h2 { color: var(--green); text-shadow: 0 0 10px var(--green); }
+        /* O Anel Quântico */
+        .quantum-ring { position: absolute; width: 550px; height: 550px; border: 8px double var(--blue); border-radius: 50%; box-shadow: 0 0 50px rgba(0, 212, 255, 0.5), inset 0 0 50px rgba(0, 212, 255, 0.3); animation: rotate 20s linear infinite; }
 
-        .btn-action { background: none; border: 1px solid var(--blue); color: var(--blue); padding: 10px 20px; cursor: pointer; margin-top: 20px; font-weight: bold; }
-        .btn-action:hover { background: var(--blue); color: #000; }
+        /* Painel Central de Código */
+        .code-display { position: relative; width: 400px; padding: 30px; background: rgba(0, 20, 40, 0.7); border: 2px solid var(--blue); border-radius: 10px; backdrop-filter: blur(10px); text-align: left; box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); }
+        .code-header { color: var(--green); font-size: 0.7em; margin-bottom: 10px; border-bottom: 1px solid rgba(128, 235, 255, 0.2); padding-bottom: 5px; }
+        .math-formula { font-family: "Courier New", monospace; font-size: 1.4em; color: #fff; margin: 15px 0; text-align: center; }
 
-        @keyframes scan { 0% { left: -100%; } 100% { left: 100%; } }
+        /* Dados de Performance (TPS / BYTES) */
+        .data-stats { display: flex; justify-content: space-around; width: 100%; margin-top: 20px; font-weight: bold; letter-spacing: 2px; }
+        .tps { color: var(--green); text-shadow: 0 0 10px var(--green); }
+        .bytes { color: var(--blue); text-shadow: 0 0 10px var(--blue); }
+
+        /* Títulos */
+        .main-title { position: absolute; top: 10%; text-align: center; letter-spacing: 3px; }
+        .main-title h1 { font-size: 1.2em; margin: 0; text-transform: uppercase; }
+        .main-title p { font-size: 0.7em; color: var(--blue); margin-top: 10px; }
+
+        .saldo-float { font-size: 2.5em; font-weight: bold; color: #fff; text-shadow: 0 0 20px var(--blue); margin-top: 20px; }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <canvas id="canvas-bots"></canvas>
 
-    <div class="quantum-ring">
-        <div style="font-size: 0.6em; letter-spacing: 5px;">ARQUITETO: ALEXANDRE FREIRE</div>
-        <div class="saldo-box" id="saldo">0.00 INC</div>
-        
-        <div class="code-core">
-            <code>f(x) = ∑ [ a_i x_i mod(√q) ]<br># REDE_INC_CORE_ACTIVE<br>> SINC: <span id="lat">0ms</span> | TRÁFEGO: <span id="vis">28514</span></code>
+    <div class="portal-container">
+        <div class="main-title">
+            <h1>REDE INC.io - DIGITAL LIBERATION</h1>
+            <p>Arquiteto & Criador: Alexandre Freire</p>
         </div>
 
-        <button class="btn-action" onclick="toggleManifesto(true)">LER MANIFESTO</button>
-    </div>
+        <div class="quantum-ring"></div>
 
-    <div id="manifesto-overlay" onclick="toggleManifesto(false)">
-        <div class="manifesto-box">
-            <h2>MANIFESTO DA VERDADEIRA DEMOCRACIA</h2>
-            <p style="line-height: 1.8; font-size: 0.9em;">"Esta não é apenas uma rede, é a libertação digital. Onde o tempo é o único senhor da riqueza e o código é a prova da existência. Na Web 4.0, o Arquiteto não governa, ele garante a liberdade através da matemática quântica."</p>
-            <p style="color: var(--green); font-size: 0.7em;">> Clique em qualquer lugar para fechar.</p>
+        <div class="code-display">
+            <div class="code-header"># REDE_INC_CORE_V4_STABLE</div>
+            <div class="math-formula">
+                f(x) = ∑ 1-ⁿ aᵢ xᵢ mod(√q)
+            </div>
+            <div style="font-size: 0.6em; color: rgba(255,255,255,0.5); line-height: 1.5;">
+                > SCANNING CORE... STATUS: SOVEREIGN<br>
+                > LATENCY: <span id="lat">0ms</span> | ACCESS: <span id="vis">28514</span>
+            </div>
+        </div>
+
+        <div class="saldo-float" id="saldo">0.00 INC</div>
+
+        <div class="data-stats">
+            <div class="tps">5000 TPS</div>
+            <div class="bytes">2500 BYTES</div>
         </div>
     </div>
 
     <script>
-        // Sistema de Nano-bots
         const canvas = document.getElementById("canvas-bots");
         const ctx = canvas.getContext("2d");
         let particles = [];
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         class Bot {
-            constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*1.5; this.speedX = (Math.random()-0.5)*1; this.speedY = (Math.random()-0.5)*1; }
+            constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*2; this.speedX = (Math.random()-0.5)*1.2; this.speedY = (Math.random()-0.5)*1.2; }
             update() { this.x += this.speedX; this.y += this.speedY; if(this.x<0||this.x>canvas.width)this.x=canvas.width; if(this.y<0||this.y>canvas.height)this.y=canvas.height; }
-            draw() { ctx.fillStyle = "#80ebff"; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
+            draw() { ctx.fillStyle = Math.random() > 0.5 ? "#80ebff" : "#39ff14"; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
         }
-        for(let i=0;i<100;i++) particles.push(new Bot());
+        for(let i=0;i<150;i++) particles.push(new Bot());
         function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(anim); }
         anim();
-
-        function toggleManifesto(show) { document.getElementById("manifesto-overlay").style.display = show ? "flex" : "none"; }
 
         async function update() {
             const t0 = performance.now();
