@@ -3,90 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REDE INC.io | WEB 4.0 SOVEREIGN</title>
+    <title>REDE INC.io | QUANTUM CORE</title>
     <style>
-        :root { --blue: #80ebff; --green: #39ff14; --bg: #050505; }
-        body { background: var(--bg); color: var(--blue); font-family: "Courier New", monospace; margin: 0; overflow-x: hidden; }
-        #canvas-bots { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.3; }
-        
-        .sidebar { position: fixed; left: -300px; top: 0; width: 300px; height: 100%; background: rgba(5,5,5,0.98); border-right: 1px solid var(--blue); transition: 0.4s; z-index: 100; padding: 25px; box-sizing: border-box; overflow-y: auto; }
-        .sidebar.active { left: 0; }
-        .menu-btn { position: fixed; top: 20px; left: 20px; cursor: pointer; z-index: 101; background: #000; border: 1px solid var(--blue); color: var(--blue); padding: 8px 15px; font-weight: bold; box-shadow: 0 0 10px var(--blue); }
+        :root { --blue: #80ebff; --green: #39ff14; --bg: #000; }
+        body { background: var(--bg); color: var(--blue); font-family: "Courier New", monospace; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        #canvas-bots { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.4; }
 
-        .main-container { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; padding: 80px 20px; min-height: 100vh; }
+        .quantum-ring { position: relative; z-index: 10; width: 90%; max-width: 500px; padding: 40px; border: 1px solid rgba(128, 235, 255, 0.3); border-radius: 50%; background: radial-gradient(circle, rgba(10,10,10,0.9) 0%, transparent 100%); text-align: center; box-shadow: 0 0 100px rgba(0,212,255,0.1); }
+
+        .saldo-box { font-size: 3em; font-weight: bold; margin: 20px 0; text-shadow: 0 0 20px var(--blue); }
         
-        .vault { border: 2px solid var(--blue); padding: 30px; border-radius: 15px; background: rgba(10,10,10,0.9); box-shadow: 0 0 40px rgba(0,212,255,0.1); text-align: center; width: 100%; max-width: 400px; }
-        .saldo-box { font-size: 2.6em; font-weight: bold; margin: 15px 0; text-shadow: 0 0 15px var(--blue); }
-        
-        .project-card { width: 100%; max-width: 450px; background: rgba(15,15,15,0.8); border: 1px solid #222; margin-top: 20px; padding: 20px; border-radius: 10px; }
-        .project-item { margin-bottom: 15px; border-left: 2px solid var(--green); padding-left: 15px; }
-        .project-title { font-size: 0.8em; font-weight: bold; color: var(--green); display: block; }
-        .project-desc { font-size: 0.7em; color: #aaa; margin-top: 5px; display: block; }
-        
-        .stat-bar { width: 100%; height: 4px; background: #111; margin: 15px 0; }
-        .stat-fill { height: 100%; background: var(--green); transition: 0.5s; }
+        /* CÓDIGO EM DESTAQUE - PAINEL HOLOGRÁFICO */
+        .code-core { background: rgba(0, 40, 60, 0.3); border: 1px solid var(--blue); padding: 15px; border-radius: 10px; font-size: 0.65em; color: var(--green); margin: 20px 0; box-shadow: inset 0 0 15px var(--blue); position: relative; overflow: hidden; }
+        .code-core::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 2px; background: var(--blue); animation: scan 3s linear infinite; }
+
+        /* MANIFESTO INTERATIVO */
+        #manifesto-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .manifesto-box { width: 80%; max-width: 600px; padding: 40px; border: 1px solid var(--green); color: #fff; text-align: left; }
+        .manifesto-box h2 { color: var(--green); text-shadow: 0 0 10px var(--green); }
+
+        .btn-action { background: none; border: 1px solid var(--blue); color: var(--blue); padding: 10px 20px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+        .btn-action:hover { background: var(--blue); color: #000; }
+
+        @keyframes scan { 0% { left: -100%; } 100% { left: 100%; } }
     </style>
 </head>
 <body>
     <canvas id="canvas-bots"></canvas>
-    <button class="menu-btn" onclick="document.querySelector(\".sidebar\").classList.toggle(\"active\")">☰ MANIFESTO WEB 4.0</button>
-    
-    <div class="sidebar">
-        <h2 style="font-size: 1em; color: var(--green);">BENEFÍCIOS WEB 4.0</h2>
-        <p style="font-size: 0.75em; line-height: 1.6; color: #80ebff;">
-            1. <b>Soberania de Dados:</b> Sem servidores centrais, controle total do Arquiteto.<br><br>
-            2. <b>Ativos Temporais:</b> A INC é minerada pelo tempo, o recurso mais democrático do universo.<br><br>
-            3. <b>Simbiose Nano:</b> Inteligência artificial (Nano-bots) que repara e vigia a rede autonomamente.<br><br>
-            4. <b>Economia da Verdade:</b> Código aberto e latência real exposta.
-        </p>
-        <hr style="border: 0; border-top: 1px solid #222; margin: 20px 0;">
-        <div style="font-size: 0.6em; color: #555;">SISTEMA OPERACIONAL INC v4.0</div>
-    </div>
 
-    <div class="main-container">
-        <div class="vault">
-            <div style="font-size: 0.5em; letter-spacing: 4px;">COFRE ATÔMICO ATIVO</div>
-            <div class="saldo-box" id="saldo">0.00 INC</div>
-            <div class="stat-bar"><div class="stat-fill" id="bar"></div></div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.6em;">
-                <span>LATÊNCIA: <b id="lat">0ms</b></span>
-                <span>ACESSOS: <b id="vis">28514</b></span>
-            </div>
+    <div class="quantum-ring">
+        <div style="font-size: 0.6em; letter-spacing: 5px;">ARQUITETO: ALEXANDRE FREIRE</div>
+        <div class="saldo-box" id="saldo">0.00 INC</div>
+        
+        <div class="code-core">
+            <code>f(x) = ∑ [ a_i x_i mod(√q) ]<br># REDE_INC_CORE_ACTIVE<br>> SINC: <span id="lat">0ms</span> | TRÁFEGO: <span id="vis">28514</span></code>
         </div>
 
-        <div class="project-card">
-            <div style="font-size: 0.6em; color: #555; margin-bottom: 15px; letter-spacing: 2px;">MÓDULOS DA NOVA ERA</div>
-            
-            <div class="project-item">
-                <span class="project-title">RELÓGIO ATÔMICO</span>
-                <span class="project-desc">Algoritmo de mineração perpétua baseado no fluxo temporal universal.</span>
-            </div>
-            
-            <div class="project-item">
-                <span class="project-title">SANGUE DIGITAL (NANO-BOTS)</span>
-                <span class="project-desc">Milhões de agentes cuidando da integridade e segurança da rede.</span>
-            </div>
+        <button class="btn-action" onclick="toggleManifesto(true)">LER MANIFESTO</button>
+    </div>
 
-            <div class="project-item">
-                <span class="project-title">TERMÔMETRO DE ENTROPIA</span>
-                <span class="project-desc">Monitoramento de tráfego em tempo real com resposta térmica visual.</span>
-            </div>
+    <div id="manifesto-overlay" onclick="toggleManifesto(false)">
+        <div class="manifesto-box">
+            <h2>MANIFESTO DA VERDADEIRA DEMOCRACIA</h2>
+            <p style="line-height: 1.8; font-size: 0.9em;">"Esta não é apenas uma rede, é a libertação digital. Onde o tempo é o único senhor da riqueza e o código é a prova da existência. Na Web 4.0, o Arquiteto não governa, ele garante a liberdade através da matemática quântica."</p>
+            <p style="color: var(--green); font-size: 0.7em;">> Clique em qualquer lugar para fechar.</p>
         </div>
     </div>
 
     <script>
+        // Sistema de Nano-bots
         const canvas = document.getElementById("canvas-bots");
         const ctx = canvas.getContext("2d");
         let particles = [];
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         class Bot {
-            constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*1.5; this.speedX = (Math.random()-0.5)*0.8; this.speedY = (Math.random()-0.5)*0.8; }
-            update() { this.x += this.speedX; this.y += this.speedY; if(this.x<0||this.x>canvas.width)this.speedX*=-1; if(this.y<0||this.y>canvas.height)this.speedY*=-1; }
+            constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*1.5; this.speedX = (Math.random()-0.5)*1; this.speedY = (Math.random()-0.5)*1; }
+            update() { this.x += this.speedX; this.y += this.speedY; if(this.x<0||this.x>canvas.width)this.x=canvas.width; if(this.y<0||this.y>canvas.height)this.y=canvas.height; }
             draw() { ctx.fillStyle = "#80ebff"; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
         }
-        for(let i=0;i<80;i++) particles.push(new Bot());
+        for(let i=0;i<100;i++) particles.push(new Bot());
         function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(anim); }
         anim();
+
+        function toggleManifesto(show) { document.getElementById("manifesto-overlay").style.display = show ? "flex" : "none"; }
 
         async function update() {
             const t0 = performance.now();
@@ -95,11 +74,7 @@
                 const d = await r.json();
                 document.getElementById("saldo").innerText = d.saldo.toLocaleString("en-US", {minimumFractionDigits: 2}) + " INC";
                 document.getElementById("vis").innerText = d.visitas;
-                const lat = Math.round(performance.now() - t0);
-                document.getElementById("lat").innerText = lat + "ms";
-                const bar = document.getElementById("bar");
-                bar.style.width = "100%";
-                bar.style.background = lat > 450 ? "#ff3e3e" : "#39ff14";
+                document.getElementById("lat").innerText = Math.round(performance.now() - t0) + "ms";
             } catch(e) {}
         }
         setInterval(update, 2000);
