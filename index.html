@@ -3,65 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REDE INC.io | PORTAL SOBERANO</title>
+    <title>REDE INC.io | PORTAL REAL</title>
     <style>
         body { 
-            margin: 0; 
-            padding: 0; 
+            margin: 0; padding: 0; 
             background: #000 url("https://r.jina.ai/i/54056247754d8004b772f9f1f0a28f8f") no-repeat center center fixed; 
             background-size: cover; 
             font-family: "Courier New", monospace; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden;
-            color: #80ebff;
+            height: 100vh; overflow: hidden; color: #80ebff;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* Camada de Dados em Destaque */
-        .overlay-data {
-            background: rgba(0, 10, 20, 0.85);
-            border: 2px solid #80ebff;
-            box-shadow: 0 0 30px rgba(128, 235, 255, 0.4);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            backdrop-filter: blur(8px);
-            max-width: 350px;
+        /* Menu Lateral (O que estava faltando abrir) */
+        .sidebar {
+            position: fixed; left: -300px; top: 0; width: 300px; height: 100%;
+            background: rgba(0, 10, 20, 0.95); border-right: 2px solid #80ebff;
+            transition: 0.4s; z-index: 1000; padding: 30px; box-sizing: border-box;
+        }
+        .sidebar.active { left: 0; }
+
+        .menu-btn {
+            position: fixed; top: 20px; left: 20px; z-index: 1001;
+            background: #000; border: 1px solid #80ebff; color: #80ebff;
+            padding: 10px; cursor: pointer; font-weight: bold; box-shadow: 0 0 10px #80ebff;
         }
 
-        .saldo-main { font-size: 2.8em; font-weight: bold; margin: 15px 0; text-shadow: 0 0 15px #00d4ff; }
-        .formula-core { font-size: 0.9em; color: #39ff14; margin-bottom: 20px; }
-        .stats-footer { display: flex; justify-content: space-between; font-size: 0.7em; border-top: 1px solid #333; padding-top: 15px; }
-        
-        /* O Intuito / Manifesto */
-        .manifesto-trigger {
-            margin-top: 25px;
-            background: #80ebff;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: bold;
-            letter-spacing: 2px;
+        /* Painel Central Transparente sobre a Foto */
+        .main-panel {
+            background: rgba(0, 0, 0, 0.75); border: 1px solid #80ebff;
+            padding: 30px; border-radius: 10px; text-align: center;
+            backdrop-filter: blur(5px); z-index: 10; max-width: 350px;
         }
+
+        .saldo-box { font-size: 2.8em; font-weight: bold; margin: 15px 0; text-shadow: 0 0 15px #00d4ff; }
+        .stats { display: flex; justify-content: space-around; font-size: 0.7em; margin-top: 20px; border-top: 1px solid #333; padding-top: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="overlay-data">
-        <div style="font-size: 0.6em; letter-spacing: 4px; opacity: 0.7;">ARQUITETO: ALEXANDRE FREIRE</div>
-        <div class="formula-core">f(x) = ∑ 1-ⁿ aᵢ xᵢ mod(√q)</div>
-        <div class="saldo-main" id="saldo">0.00 INC</div>
-        
-        <div class="stats-footer">
-            <span>LATÊNCIA: <b id="lat" style="color:#39ff14">0ms</b></span>
-            <span>ACESSOS: <b id="vis" style="color:#39ff14">28514</b></span>
-        </div>
+    <button class="menu-btn" onclick="document.getElementById(\"side\").classList.toggle(\"active\")">☰ MANIFESTO</button>
 
-        <button class="manifesto-trigger" onclick="alert(\"O INTUITO: Esta rede é a manifestação da soberania digital. Onde o tempo gera valor e o Arquiteto Alexandre Freire detém o controle absoluto da Nova Era Web 4.0.\")">MANIFESTO</button>
+    <div class="sidebar" id="side">
+        <h2 style="color:#39ff14">MANIFESTO INC</h2>
+        <p style="font-size: 0.8em; line-height: 1.6;">Esta é a soberania digital da Nova Era Web 4.0. O Arquiteto Alexandre Freire detém o controle do tempo e dos ativos através desta interface.</p>
+        <button onclick="document.getElementById(\"side\").classList.remove(\"active\")" style="background:none; border:1px solid #ff3e3e; color:#ff3e3e; cursor:pointer;">FECHAR</button>
+    </div>
+
+    <div class="main-panel">
+        <div style="font-size: 0.6em; letter-spacing: 3px;">ARQUITETO: ALEXANDRE FREIRE</div>
+        <div style="color:#39ff14; font-size: 0.8em; margin: 10px 0;">f(x) = ∑ 1-ⁿ aᵢ xᵢ mod(√q)</div>
+        <div class="saldo-box" id="saldo">0.00 INC</div>
+        
+        <div class="stats">
+            <span>LATÊNCIA: <b id="lat">0ms</b></span>
+            <span>ACESSOS: <b id="vis">28514</b></span>
+        </div>
     </div>
 
     <script>
