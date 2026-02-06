@@ -3,62 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | PRESS_RELEASE_OFFICIAL</title>
+    <title>INC.NEXUS | TOTAL_EMPIRE</title>
     <style>
-        :root { --bg: #030303; --card: #0a0a0a; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #f0f0f0; --dim: #666; }
+        :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --red: #ff3e3e; --text: #f0f0f0; --dim: #555; }
         * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; overflow-y: auto; line-height: 1.6; }
+        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .badge { background: var(--blue); color: #000; padding: 5px 12px; border-radius: 4px; font-size: 0.6em; font-weight: bold; text-transform: uppercase; }
-        h1 { font-size: 1.8em; font-weight: 900; margin: 20px 0 10px; color: #fff; letter-spacing: -1px; }
-        .meta { font-size: 0.7em; color: var(--dim); margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .telemetry { background: #000; padding: 10px 15px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; font-family: monospace; font-size: 0.55em; }
+        .telemetry b { color: var(--green); }
+
+        nav { display: flex; background: #000; border-bottom: 1px solid #222; overflow-x: auto; white-space: nowrap; }
+        .nav-link { flex: 1; padding: 15px 20px; text-align: center; font-size: 0.6em; color: var(--dim); cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-link.active { color: var(--blue); border-bottom: 2px solid var(--blue); background: rgba(0,170,255,0.05); }
+
+        #viewport { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 16px; padding: 20px; margin-bottom: 15px; }
+        .val-main { font-size: 2.2em; font-weight: 900; letter-spacing: -1px; margin: 10px 0; }
+        .label { font-size: 0.6em; color: var(--dim); text-transform: uppercase; }
+
+        /* LISTA DE ATIVOS */
+        .asset-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #111; font-size: 0.85em; }
         
-        .content { font-size: 0.95em; color: #ccc; text-align: justify; }
-        .quote { background: #000; border-left: 3px solid var(--blue); padding: 20px; font-style: italic; margin: 25px 0; color: #fff; }
+        /* BOTÕES */
+        .btn-pay { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; }
         
-        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 16px; padding: 20px; margin-top: 40px; }
-        .btn-copy { background: var(--blue); color: #000; border: none; padding: 15px; border-radius: 8px; font-weight: 800; width: 100%; cursor: pointer; text-transform: uppercase; margin-top: 15px; }
-        
-        footer { margin-top: 50px; text-align: center; font-size: 0.6em; color: var(--dim); padding-bottom: 30px; }
+        /* PRESS RELEASE */
+        .pr-box { font-size: 0.85em; line-height: 1.6; color: #ccc; text-align: justify; }
+        .pr-title { font-size: 1.4em; color: #fff; font-weight: 900; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="badge">COMUNICADO OFICIAL | PARA PUBLICAÇÃO IMEDIATA</div>
-    <h1>Alexandre Freire Anuncia a Ativação da Rede INC: A Nova Fronteira da Democracia Digital</h1>
-    
-    <div class="meta">
-        POR: REDE INC NEWSROOM | DATA: 06 DE FEVEREIRO DE 2026 | LOCAL: SÃO PAULO / GLOBAL
+    <div class="telemetry">
+        <span>LATENCY: <b id="lat">12 ms</b></span>
+        <span>TPS: <b id="tps">412.5</b></span>
+        <span>NETWORK: <b>SVP_NEXUS</b></span>
     </div>
 
-    <div class="content">
-        <p><b>SÃO PAULO</b> — O Arquiteto de sistemas <b>Alexandre Freire</b> oficializou hoje a listagem e ativação global da <b>Rede INC</b>. Projetada para ser a infraestrutura financeira definitiva, a INC combina uma escassez absoluta de 10 milhões de unidades com a proteção inédita da Grade Lattice de 2.500 bits.</p>
+    <nav>
+        <div class="nav-link active" onclick="tab('trade', this)">Exchange</div>
+        <div class="nav-link" onclick="tab('wallet', this)">Cofre</div>
+        <div class="nav-link" onclick="tab('news', this)">Imprensa</div>
+        <div class="nav-link" onclick="tab('cmc', this)">Auditoria</div>
+    </nav>
 
-        <div class="quote">
-            "Não estamos apenas lançando uma moeda, estamos estabelecendo a Verdadeira Democracia Financeira. A Rede INC é o porto seguro para o capital soberano, blindada contra a volatilidade institucional e a ameaça da computação quântica." <br>— <b>Alexandre Freire</b>, Arquiteto Chefe.
+    <div id="viewport">
+        
+        <div id="trade" class="page active-page">
+            <div class="card" style="text-align:center;">
+                <div class="label">Preço INC (SVP)</div>
+                <div class="val-main" style="color:var(--green);">$ 5.2632</div>
+                <button class="btn-pay" onclick="tab('wallet', document.querySelectorAll('.nav-link')[1])">Acessar Carteira</button>
+            </div>
+            <div class="card">
+                <div class="label">Mercados Ativos</div>
+                <div class="asset-row"><span>BTC / INC</span><b>12.441,00</b></div>
+                <div class="asset-row"><span>ETH / INC</span><b>682,50</b></div>
+                <div class="asset-row"><span>USD / INC</span><b>0.19</b></div>
+            </div>
         </div>
 
-        <p>Diferente dos modelos tradicionais, a Rede INC introduz o conceito de <b>Cofre de Governança</b>. Toda liquidez injetada no ecossistema contribui com uma taxa fixa de 2%, destinada exclusivamente à manutenção e expansão dos 2.500 nós mestres que garantem a segurança atômica de cada transação.</p>
+        <div id="wallet" class="page">
+            <div class="card">
+                <div class="label">Saldo Consolidado</div>
+                <div id="total-val" class="val-main">$ 0.00</div>
+                <div style="font-size:0.5em; color:var(--blue);">ID SOBERANO: <span id="uid">INC_8X...</span></div>
+            </div>
+            <div class="card">
+                <div class="asset-row"><span>INC Coin</span><b id="bal-inc">0.00</b></div>
+                <div class="asset-row"><span>Bitcoin</span><b id="bal-btc">0.0000</b></div>
+                <div class="asset-row" style="color:var(--gold);"><span>Governança (2%)</span><b id="bal-gov">$ 0.00</b></div>
+            </div>
+        </div>
 
-        <p>Com a indexação iniciada no <b>CoinMarketCap</b> e a integração de gateways de pagamento como Apple Pay e Cripto-Bridges, a INC agora se posiciona como o ativo de custódia preferencial para investidores que buscam independência total.</p>
+        <div id="news" class="page">
+            <div class="card">
+                <div class="pr-title">COMUNICADO OFICIAL</div>
+                <div class="pr-box">
+                    <b>SÃO PAULO</b> — O Arquiteto <b>Alexandre Freire</b> oficializou hoje a ativação da Rede INC. Com escassez de 10M e proteção Lattice de 2500 bits, a INC redefine a democracia digital.
+                </div>
+                <button class="btn-pay" style="margin-top:20px; font-size:0.7em;" onclick="alert('Copiado!')">Copiar para Imprensa</button>
+            </div>
+        </div>
+
+        <div id="cmc" class="page">
+            <div class="card">
+                <div class="label">Status CoinMarketCap</div>
+                <div style="color:var(--gold); font-weight:bold; margin:10px 0;">AUDITORIA DE LASTRO EM CURSO</div>
+                <div style="font-family:monospace; font-size:0.6em; background:#000; padding:10px; border-radius:5px;">
+                    > Verificando 2500 Nodes...<br>
+                    > Validando 10M Supply...
+                </div>
+            </div>
+        </div>
+
     </div>
-
-    <div class="card">
-        <h3 style="margin-top:0; color:var(--blue);">Dossiê Técnico para Imprensa</h3>
-        <p style="font-size:0.75em; color:var(--dim);">Copie o texto oficial para distribuição em portais de notícias e redes sociais.</p>
-        <button class="btn-copy" onclick="copyPR()">Copiar Comunicado</button>
-    </div>
-
-    <footer>
-        ©️ 2026 ALEXANDRE FREIRE INC | NEXUS PROTOCOL | ALL RIGHTS RESERVED
-    </footer>
 
     <script>
-        function copyPR() {
-            const text = document.body.innerText;
-            navigator.clipboard.writeText(text);
-            alert("Comunicado copiado! Pronto para envio aos portais de notícias.");
+        let db = JSON.parse(localStorage.getItem('inc_v22')) || { inc: 0, btc: 0, gov: 0, id: "INC_"+Math.random().toString(16).slice(2,8).toUpperCase() };
+
+        function tab(id, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active-page');
+            el.classList.add('active');
         }
+
+        window.onload = () => {
+            document.getElementById('uid').innerText = db.id;
+            document.getElementById('bal-inc').innerText = db.inc.toFixed(2);
+            document.getElementById('bal-gov').innerText = "$ " + db.gov.toFixed(2);
+            document.getElementById('total-val').innerText = "$ " + (db.inc * 5.26).toFixed(2);
+            
+            setInterval(() => {
+                document.getElementById('lat').innerText = (10 + Math.random()*5).toFixed(0) + " ms";
+                document.getElementById('tps').innerText = (410 + Math.random()*15).toFixed(1);
+            }, 2000);
+        };
     </script>
 </body>
 </html>
