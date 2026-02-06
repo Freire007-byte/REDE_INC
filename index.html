@@ -3,87 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | OPEN_FINANCE_GATEWAY</title>
+    <title>INC.OS | SOVEREIGN_CORE_v5</title>
     <style>
-        :root { --bg: #050505; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; }
+        :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #f0f0f0; --dim: #555; }
         * { box-sizing: border-box; font-family: "Segoe UI", sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        header { background: #111; padding: 18px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
-        .net-tag { font-size: 0.55em; padding: 4px 8px; border: 1px solid var(--green); color: var(--green); border-radius: 4px; }
+        /* TELAS */
+        .screen { display: none; height: 100%; flex-direction: column; padding: 25px; overflow-y: auto; animation: fadeIn 0.4s ease; }
+        .active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        #main-view { flex: 1; overflow-y: auto; padding: 20px; }
-        .exchange-card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        /* COMPONENTES */
+        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 24px; padding: 25px; margin-bottom: 20px; }
+        .btn-blue { background: var(--blue); color: #000; border: none; padding: 20px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; }
+        .btn-green { background: var(--green); color: #000; border: none; padding: 20px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; }
+        .input-box { background: #000; border: 1px solid #333; border-radius: 12px; padding: 18px; color: #fff; width: 100%; font-size: 1.2em; outline: none; margin: 15px 0; }
         
-        /* OPEN BANKING UI */
-        .input-label { font-size: 0.6em; color: #555; margin-bottom: 10px; text-transform: uppercase; }
-        .amount-input { background: #000; border: 1px solid #333; border-radius: 12px; padding: 20px; color: #fff; font-size: 2em; width: 100%; outline: none; font-weight: bold; margin-bottom: 20px; }
+        /* DASHBOARD ESPECÍFICO */
+        .balance-label { font-size: 0.7em; color: var(--dim); letter-spacing: 2px; }
+        .balance-value { font-size: 2.8em; font-weight: 900; color: var(--blue); margin: 10px 0; }
         
-        .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .bank-btn { background: #111; border: 1px solid #222; padding: 15px; border-radius: 12px; color: #fff; font-size: 0.7em; cursor: pointer; transition: 0.2s; text-align: center; }
-        .bank-btn:active { border-color: var(--blue); background: rgba(0,170,255,0.1); }
-        .bank-btn.selected { border-color: var(--blue); background: rgba(0,170,255,0.1); color: var(--blue); }
+        /* BANCOS */
+        .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .bank-item { background: #111; border: 1px solid #222; padding: 15px; border-radius: 12px; text-align: center; font-size: 0.7em; cursor: pointer; }
+        .bank-item.selected { border-color: var(--blue); background: rgba(0,170,255,0.1); }
 
-        .btn-connect { background: var(--blue); color: #000; border: none; padding: 20px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 1em; margin-top: 10px; }
-        
-        /* LOADING OVERLAY */
-        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
-        .spinner { width: 50px; height: 50px; border: 3px solid #222; border-top: 3px solid var(--blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* OVERLAY BANCÁRIO */
+        #bank-auth { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; align-items: center; justify-content: center; flex-direction: column; padding: 40px; }
+        .loader { width: 60px; height: 60px; border: 4px solid #111; border-top: 4px solid var(--blue); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <header>
-        <div style="font-weight:bold; letter-spacing:1px;">INC<span style="color:var(--blue)">.OS</span></div>
-        <div class="net-tag">OPEN_FINANCE_ACTIVE</div>
-    </header>
-    
-    <div id="main-view">
-        <div class="exchange-card">
-            <div class="input-label">Valor para Aporte (EUR/BRL)</div>
-            <input type="number" id="val" class="amount-input" placeholder="0.00" oninput="calc()">
-            
-            <div id="preview" style="font-size:0.8em; color:var(--green); margin-bottom:20px;">Recebe: 0.00 INC</div>
 
-            <div class="input-label">Selecione sua Instituição Bancária</div>
-            <div class="bank-grid">
-                <div class="bank-btn" onclick="sel(this)">Santander / SEPA</div>
-                <div class="bank-btn" onclick="sel(this)">Revolut / Global</div>
-                <div class="bank-btn" onclick="sel(this)">Itaú / PIX</div>
-                <div class="bank-btn" onclick="sel(this)">Nubank / PIX</div>
-            </div>
-
-            <button class="btn-connect" onclick="connect()">CONECTAR CONTA E PAGAR</button>
-            <p style="font-size:0.5em; color:#444; text-align:center; margin-top:15px;">CONEXÃO PROTEGIDA PELA GRADE LATTICE 2500 BITS</p>
+    <div id="screen-onboarding" class="screen active" style="justify-content: center;">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="font-size: 2.5em; letter-spacing: -1px; margin:0;">INC<span style="color:var(--blue)">.OS</span></h1>
+            <p style="color:var(--dim); font-size: 0.8em;">SISTEMA OPERACIONAL FINANCEIRO</p>
+        </div>
+        <div class="card">
+            <h2 style="margin-top:0; font-size:1.2em;">Criar Conta Soberana</h2>
+            <p style="font-size:0.7em; color:#888;">Gere sua identidade de 2.500 bits na Grade Lattice para começar.</p>
+            <button class="btn-blue" onclick="createAccount()">GERAR CHAVE ATÔMICA</button>
         </div>
     </div>
 
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <div id="status-msg" style="font-size:0.9em; font-weight:bold; letter-spacing:1px;">CONECTANDO AO GATEWAY BANCÁRIO...</div>
-        <div style="font-size:0.6em; color:#555; margin-top:10px;">Autenticando via Chave SVP Alexandre Freire</div>
+    <div id="screen-dash" class="screen">
+        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <div style="font-weight:bold; font-size:1.2em;">INC<span style="color:var(--blue)">.OS</span></div>
+            <div style="font-size:0.5em; padding:5px 10px; border:1px solid var(--green); color:var(--green); border-radius:20px;">REDE_ATIVA</div>
+        </header>
+
+        <div class="card">
+            <div class="balance-label">SALDO TOTAL</div>
+            <div id="main-balance" class="balance-value">0.00 INC</div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-green" style="padding:12px; font-size:0.7em;" onclick="goToBuy()">DEPOSITAR / COMPRAR</button>
+            </div>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--gold);">
+            <div class="balance-label" style="color:var(--gold)">GOVERNANÇA (2%)</div>
+            <div id="gov-balance" style="font-size:1.5em; font-weight:bold; color:var(--gold); margin-top:5px;">0.00 INC</div>
+        </div>
+    </div>
+
+    <div id="screen-buy" class="screen">
+        <div style="margin-bottom:20px; font-weight:bold; cursor:pointer;" onclick="goDash()">← VOLTAR</div>
+        <div class="card">
+            <div class="balance-label">VALOR DO APORTE (EUR/BRL)</div>
+            <input type="number" id="buy-amount" class="input-box" placeholder="0.00" oninput="liveConvert()">
+            <div id="calc-preview" style="font-size:0.8em; color:var(--green); font-weight:bold;">Recebe: 0.00 INC</div>
+        </div>
+
+        <div class="card">
+            <div class="balance-label">CONECTAR INSTITUIÇÃO BANCÁRIA</div>
+            <div class="bank-grid">
+                <div class="bank-item" onclick="selB(this)">Santander</div>
+                <div class="bank-item" onclick="selB(this)">Revolut</div>
+                <div class="bank-item" onclick="selB(this)">Itaú / Pix</div>
+                <div class="bank-item" onclick="selB(this)">Nubank</div>
+            </div>
+            <button class="btn-blue" style="margin-top:20px;" onclick="processBank()">AUTORIZAR E FINALIZAR</button>
+        </div>
+    </div>
+
+    <div id="bank-auth">
+        <div class="loader"></div>
+        <h3 id="auth-status" style="margin-top:20px; letter-spacing:1px;">CONECTANDO AO BANCO...</h3>
+        <p style="font-size:0.6em; color:#555;">CRIPTOGRAFIA LATTICE ASSINANDO TRANSAÇÃO</p>
     </div>
 
     <script>
-        function sel(e) {
-            document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
+        let currentBalance = 789442.10;
+        let currentGov = 16104.62;
+
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function createAccount() {
+            // Simula a criação real da conta com delay de segurança
+            alert("Gerando Chave de 2500 bits na Grade Lattice...");
+            show('screen-dash');
+            updateBalances();
+        }
+
+        function updateBalances() {
+            document.getElementById('main-balance').innerText = currentBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + " INC";
+            document.getElementById('gov-balance').innerText = currentGov.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + " INC";
+        }
+
+        function goToBuy() { show('screen-buy'); }
+        function goDash() { show('screen-dash'); }
+
+        function selB(e) {
+            document.querySelectorAll('.bank-item').forEach(b => b.classList.remove('selected'));
             e.classList.add('selected');
         }
-        function calc() {
-            let v = document.getElementById("val").value || 0;
-            document.getElementById("preview").innerText = "Recebe: " + (v * 5.26 * 0.98).toFixed(2) + " INC";
+
+        function liveConvert() {
+            let v = document.getElementById('buy-amount').value || 0;
+            document.getElementById('calc-preview').innerText = "Recebe: " + (v * 5.26 * 0.98).toFixed(2) + " INC";
         }
-        function connect() {
-            let v = document.getElementById("val").value;
-            if(v <= 0) return alert("Defina o valor.");
+
+        function processBank() {
+            let amt = document.getElementById('buy-amount').value;
+            if(!amt) return alert("Insira um valor.");
             
-            document.getElementById("loading-overlay").style.display = 'flex';
+            document.getElementById('bank-auth').style.display = 'flex';
             
-            setTimeout(() => { document.getElementById("status-msg").innerText = "AUTORIZANDO TRANSFERÊNCIA..."; }, 2000);
-            setTimeout(() => { document.getElementById("status-msg").innerText = "DESVIANDO 2% PARA GOVERNANÇA..."; document.getElementById("status-msg").style.color = "#ffae00"; }, 4000);
-            setTimeout(() => { 
-                alert("SUCESSO: Aporte de " + v + " realizado. O capital foi injetado na rede INC.");
-                location.reload();
+            setTimeout(() => { document.getElementById('auth-status').innerText = "AUTORIZANDO SALDO..."; }, 2000);
+            setTimeout(() => { document.getElementById('auth-status').innerText = "EXECUTANDO TAXA DE 2%..."; }, 4000);
+            
+            setTimeout(() => {
+                let gain = amt * 5.26 * 0.98;
+                let gov = amt * 5.26 * 0.02;
+                currentBalance += gain;
+                currentGov += gov;
+                
+                document.getElementById('bank-auth').style.display = 'none';
+                updateBalances();
+                show('screen-dash');
+                alert("SUCESSO: Aporte integrado à rede INC.");
             }, 6000);
         }
     </script>
