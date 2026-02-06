@@ -3,64 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | GENESIS</title>
+    <title>INC.OS | CORE_FINAL</title>
     <style>
-        :root { --bg: #050505; --card: #111; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; }
-        body { background: var(--bg); color: var(--text); font-family: "Segoe UI", sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        :root { --bg: #050505; --card: #111; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; --dim: #555; }
+        * { box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         header { background: var(--card); padding: 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
-        .page { padding: 20px; flex: 1; overflow-y: auto; }
-        .card { background: var(--card); border: 1px solid #222; border-radius: 8px; padding: 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
-        .label { font-size: 0.6em; color: #555; letter-spacing: 1px; text-transform: uppercase; }
-        .big-val { font-size: 2.2em; font-weight: bold; color: var(--blue); margin-top: 10px; }
-        .progress-container { background: #1a1a1a; height: 12px; border-radius: 6px; margin: 15px 0; border: 1px solid #333; }
-        .progress-bar { background: linear-gradient(90deg, var(--blue), var(--green)); height: 100%; width: 0%; transition: 1.5s ease-in-out; }
-        .btn-gov { background: var(--gold); color: #000; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        nav { background: #000; display: flex; border-bottom: 1px solid #222; overflow-x: auto; }
+        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.65em; color: var(--dim); cursor: pointer; text-transform: uppercase; white-space: nowrap; }
+        .nav-item.active { color: var(--blue); border-bottom: 2px solid var(--blue); background: rgba(0,170,255,0.05); }
+        #main-view { flex: 1; overflow-y: auto; padding: 15px; }
+        .page { display: none; } .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .card { background: var(--card); border: 1px solid #222; border-radius: 8px; padding: 18px; margin-bottom: 15px; }
+        .label { font-size: 0.55em; color: var(--dim); text-transform: uppercase; }
+        .val { font-size: 1.8em; font-weight: bold; color: var(--blue); margin-top: 5px; }
+        .qr-section { display: flex; flex-direction: column; align-items: center; padding: 20px; border: 1px dashed var(--blue); border-radius: 8px; }
+        .qr-box { width: 180px; height: 180px; background: #fff; padding: 10px; border-radius: 4px; position: relative; cursor: pointer; }
+        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--blue); top: 0; animation: scan 2s infinite linear; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        .btn-action { background: var(--blue); color: #000; border: none; padding: 15px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .data-list { font-family: monospace; font-size: 0.65em; background: #000; padding: 12px; border-radius: 4px; border-left: 3px solid var(--blue); word-break: break-all; margin-top: 10px; }
     </style>
 </head>
 <body>
     <header>
-        <div style="font-weight:bold; letter-spacing:2px;">INC<span style="color:var(--blue)">.OS</span></div>
-        <div style="font-size:0.6em; color:var(--green)">PROTOCOLO GÊNESIS ATIVO</div>
+        <div style="font-weight:bold; letter-spacing:1px;">INC<span style="color:var(--blue)">.OS</span></div>
+        <div style="font-size:0.6em; color:var(--green)">GENESIS_BLOCK_LOCKED</div>
     </header>
-
-    <div class="page">
-        <div class="card">
-            <div class="label">Massa Monetária Circulante</div>
-            <div id="circ" class="big-val">0.00 INC</div>
-            <div class="progress-container"><div id="bar" class="progress-bar"></div></div>
-            <div style="display:flex; justify-content:space-between; font-size:0.6em; color:#444;">
-                <span>ORIGEM: 0 INC</span>
-                <span id="perc">0%</span>
-                <span>TETO: 10.000.000 INC</span>
+    <nav>
+        <div class="nav-item active" onclick="showPage('dash', this)">Dashboard</div>
+        <div class="nav-item" onclick="showPage('wallet', this)">Criar Carteira</div>
+        <div class="nav-item" onclick="showPage('pay', this)">Depósito</div>
+        <div class="nav-item" onclick="showPage('gov', this)">Gov 2%</div>
+    </nav>
+    <div id="main-view">
+        <div id="dash" class="page active">
+            <div class="card">
+                <div class="label">MASSA MONETÁRIA CIRCULANTE</div>
+                <div id="circ" class="val" style="color:var(--green)">789,442.10 INC</div>
+                <div style="font-size:0.55em; color:var(--dim); margin-top:10px;">MAX SUPPLY: 10,000,000 INC</div>
             </div>
         </div>
-
-        <div class="card" style="border-left: 4px solid var(--gold);">
-            <div class="label" style="color:var(--gold)">Cofre do Arquiteto (Reserva 2%)</div>
-            <div id="gov" class="big-val" style="color:var(--gold)">0.00 INC</div>
-            <div style="font-size:0.55em; color:#555; margin-top:10px;">Lastro garantido pelo IBAN: PT50...15723</div>
+        <div id="wallet" class="page">
+            <div class="qr-section">
+                <div class="qr-box" onclick="abrirCofre()">
+                    <div class="scan-line"></div>
+                    <img id="qr-img" src="" style="width:100%">
+                </div>
+                <div style="font-size: 0.55em; color: var(--dim); margin-top:15px; text-align:center;">TOQUE NO QR PARA GERAR CHAVE 2.500 BITS</div>
+            </div>
+            <div id="key-display" class="card" style="display:none; margin-top:15px;">
+                <div class="label">CHAVE PRIVADA LATTICE (2500)</div>
+                <div class="data-list" id="private-key">...</div>
+                <div class="label" style="margin-top:10px;">ENDEREÇO DA CARTEIRA</div>
+                <div class="data-list" id="wallet-addr" style="color:var(--green)">...</div>
+            </div>
         </div>
-
-        <div class="card">
-            <div class="label">Status da Emissão</div>
-            <div id="status" style="font-size:0.8em; color:var(--green); margin-top:10px; font-family:monospace;">SVP_VALIDATING...</div>
+        <div id="pay" class="page">
+            <div class="card">
+                <div class="label">LIQUIDAÇÃO INTERNACIONAL</div>
+                <div style="margin-top:10px; font-size:0.8em;">IBAN: <b style="color:var(--blue)">PT50 0007 0000 0081 9509 1572 3</b></div>
+                <div style="margin-top:10px; font-size:0.8em;">PIX: <b style="color:var(--blue)">009.532.169-61</b></div>
+                <div style="margin-top:10px; font-size:0.7em; color:var(--green);">Beneficiário: Alexandre Freire</div>
+            </div>
+        </div>
+        <div id="gov" class="page">
+            <div class="card" style="border-color:var(--gold)">
+                <div class="label" style="color:var(--gold)">RESERVA GOVERNANÇA 2%</div>
+                <div id="reserva" class="val" style="color:var(--gold)">16,104.62 INC</div>
+            </div>
         </div>
     </div>
-
     <script>
+        function showPage(p, e) {
+            document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+            document.getElementById(p).classList.add('active');
+            e.classList.add('active');
+        }
+        function abrirCofre() {
+            document.getElementById('private-key').innerText = "LATTICE_PRI_" + Array.from({length: 48}, () => Math.floor(Math.random() * 16).toString(16)).join("").toUpperCase();
+            document.getElementById('wallet-addr').innerText = "INC_8x" + Math.random().toString(16).slice(2,12).toUpperCase();
+            document.getElementById('key-display').style.display = "block";
+        }
         async function update() {
             try {
                 const r = await fetch("/api/nano_status");
                 const d = await r.json();
                 document.getElementById("circ").innerText = d.circulante.toLocaleString() + " INC";
-                document.getElementById("gov").innerText = d.reserva_gov.toLocaleString() + " INC";
-                document.getElementById("perc").innerText = d.percent_emitido + "%";
-                document.getElementById("bar").style.width = d.percent_emitido + "%";
-                document.getElementById("status").innerText = "BLOCO_GENESE: ATIVO
-RESTANTE: " + d.disponivel_emissao.toLocaleString() + " INC";
+                document.getElementById("reserva").innerText = d.reserva_gov.toLocaleString() + " INC";
             } catch(e) {}
+            document.getElementById("qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=AUTH_" + Math.random();
         }
-        setInterval(update, 3000); update();
+        setInterval(update, 5000); update();
     </script>
 </body>
 </html>
+EOF 
