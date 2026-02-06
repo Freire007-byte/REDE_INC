@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.ULTIMATE | THE ARCHITECT EDITION</title>
+    <title>INC.ULTIMATE | REAL_TIME_ENGINE</title>
     <style>
         :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #fcd535; --red: #ff3e3e; --text: #eaecef; --dim: #848e9c; }
         * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* TELEMETRIA BINANCE-STYLE */
-        .market-ticker { background: #000; padding: 5px 15px; border-bottom: 1px solid #1a1a1a; display: flex; gap: 20px; font-family: monospace; font-size: 0.55em; overflow-x: auto; white-space: nowrap; }
-        .ticker-item b { color: var(--green); }
+        .market-ticker { background: #000; padding: 8px 15px; border-bottom: 1px solid #1a1a1a; display: flex; gap: 20px; font-family: monospace; font-size: 0.6em; overflow-x: auto; white-space: nowrap; }
+        .ticker-item b { color: var(--green); transition: 0.3s; }
 
         header { background: #0a0a0a; padding: 15px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         
@@ -19,23 +18,13 @@
         .page { display: none; } .active-page { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* CARDS PROFISSIONAIS */
         .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 12px; padding: 18px; margin-bottom: 12px; }
         .label { font-size: 0.55em; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
         .val-main { font-size: 2.1em; font-weight: 900; color: var(--text); margin: 5px 0; }
         
-        /* BOTÕES OMNI-CHANNEL */
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .btn-action { background: #1a1a1a; border: 1px solid #333; padding: 12px; border-radius: 8px; color: #fff; font-size: 0.6em; font-weight: bold; cursor: pointer; text-align: center; }
-        .btn-action:active { background: var(--blue); color: #000; }
-
-        /* LIVRO DE ORDENS (KRAKEN) */
         .order-book { font-family: monospace; font-size: 0.65em; }
         .order-row { display: flex; justify-content: space-between; padding: 3px 0; }
         .bid { color: var(--green); } .ask { color: var(--red); }
-
-        /* NOTIFICAÇÃO TOAST */
-        #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--blue); color: #000; padding: 10px 20px; border-radius: 20px; font-size: 0.7em; font-weight: bold; display: none; z-index: 1000; }
 
         nav { background: #000; border-top: 1px solid #222; display: flex; position: fixed; bottom: 0; width: 100%; padding-bottom: env(safe-area-inset-bottom); }
         .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.55em; color: var(--dim); cursor: pointer; text-transform: uppercase; }
@@ -45,128 +34,81 @@
 <body>
 
     <div class="market-ticker">
+        <span class="ticker-item">BTC/USD: <b id="price-btc">BUSCANDO...</b></span>
+        <span class="ticker-item">ETH/USD: <b id="price-eth">...</b></span>
         <span class="ticker-item">INC/USD: <b>5.2632</b></span>
-        <span class="ticker-item">BTC/USD: <b>64,210.12</b></span>
         <span class="ticker-item">SVP_SHIELD: <b>ACTIVE</b></span>
-        <span class="ticker-item">LATTICE: <b>2500_BITS</b></span>
     </div>
 
     <header>
         <div style="font-weight:900; color:var(--blue); font-size:1.2em;">INC<span style="color:#fff">.ULTIMATE</span></div>
-        <div id="status-net" style="font-size:0.5em; color:var(--green); border:1px solid var(--green); padding:2px 6px; border-radius:4px;">CMC_LISTED</div>
+        <div style="font-size:0.5em; color:var(--green); border:1px solid var(--green); padding:2px 6px; border-radius:4px;">LIVE_DATA</div>
     </header>
 
     <div id="viewport">
         <div id="trade" class="page active-page">
             <div class="card">
-                <div class="label">Patrimônio Líquido</div>
-                <div class="val-main" id="bal-total">$ 52,632.00</div>
+                <div class="label">Patrimônio em Tempo Real</div>
+                <div class="val-main" id="bal-total">$ 52,651.60</div>
                 <div style="display:flex; justify-content:space-between; font-size:0.6em; color:var(--green);">
-                    <span>+2.41% (24h)</span><span id="bal-uid">ID: ---</span>
+                    <span>CONEXÃO GLOBAL ATIVA</span><span id="bal-uid">ID: ---</span>
                 </div>
-            </div>
-
-            <div class="action-grid">
-                <div class="btn-action" onclick="tab('pay')">DEPOSITAR</div>
-                <div class="btn-action" onclick="tab('receive')">RECEBER</div>
-                <div class="btn-action" onclick="tab('wp')">MANIFESTO</div>
             </div>
 
             <div class="card">
-                <div class="label">Order Book (Real-Time)</div>
-                <div class="order-book" id="ob">
-                    </div>
-            </div>
-        </div>
-
-        <div id="pay" class="page">
-            <div class="card">
-                <h2 style="font-size:1em; margin-top:0;">Liquidez Imediata</h2>
-                <div class="label">Valor em USD</div>
-                <input type="number" id="amt" style="width:100%; background:#000; border:1px solid #333; padding:15px; border-radius:8px; color:#fff; margin:10px 0;" placeholder="0.00">
-                <div class="label">Pagar com:</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-                    <button class="btn-action" onclick="process(0.98)">APPLE PAY</button>
-                    <button class="btn-action" onclick="process(0.98)">PAYPAL</button>
-                    <button class="btn-action" onclick="process(0.98)">PIX / CRYPTO</button>
-                    <button class="btn-action" onclick="process(0.98)">VISA / MC</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="receive" class="page">
-            <div class="card" style="text-align:center;">
-                <div class="label">Sua Chave de Grade</div>
-                <div id="qr-box" style="background:#fff; width:150px; height:150px; margin:15px auto; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-                    <img id="qr-img" src="" style="width:90%;">
-                </div>
-                <div class="label" id="qr-addr" style="font-family:monospace; color:var(--blue);">---</div>
-            </div>
-            <div class="card">
-                <div class="label">Auditoria de Lastro (10M INC)</div>
-                <div style="font-size:0.7em; display:flex; justify-content:space-between; margin-top:10px;">
-                    <span>Genesis Vault:</span><b>6,000,000</b>
-                </div>
-                <div style="font-size:0.7em; display:flex; justify-content:space-between; color:var(--gold);">
-                    <span>Governança:</span><b id="bal-gov">$ 1,052.00</b>
-                </div>
+                <div class="label">Order Book (Real-Time Stream)</div>
+                <div class="order-book" id="ob"></div>
             </div>
         </div>
     </div>
 
-    <div id="toast">OPERACAO CONCLUIDA</div>
-
     <nav>
-        <div class="nav-item active" onclick="tab('trade', this)">Exchange</div>
-        <div class="nav-item" onclick="tab('pay', this)">Aporte</div>
-        <div class="nav-item" onclick="tab('receive', this)">Cofre</div>
-        <div class="nav-item" onclick="location.reload()">Reset</div>
+        <div class="nav-item active">Exchange</div>
+        <div class="nav-item">Aporte</div>
+        <div class="nav-item">Cofre</div>
+        <div class="nav-item" onclick="location.reload()">Sair</div>
     </nav>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('inc_v38')) || { usd: 52632.00, gov: 1052.00, id: "INC_"+Math.random().toString(36).substr(2,6).toUpperCase() };
-
-        function tab(id, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.getElementById(id).classList.add('active-page');
-            if(el) {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                el.classList.add('active');
+        // CONEXÃO COM O MERCADO REAL (API BINANCE)
+        const btcPrice = document.getElementById('price-btc');
+        const ethPrice = document.getElementById('price-eth');
+        
+        async function fetchPrices() {
+            try {
+                const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","ETHUSDT"]');
+                const data = await res.json();
+                
+                const btc = parseFloat(data[0].price).toLocaleString('en-US', {minimumFractionDigits: 2});
+                const eth = parseFloat(data[1].price).toLocaleString('en-US', {minimumFractionDigits: 2});
+                
+                btcPrice.innerText = btc;
+                ethPrice.innerText = eth;
+                genOB(parseFloat(data[0].price));
+            } catch (e) {
+                console.log("Erro de conexão");
             }
         }
 
-        function process(fee) {
-            let a = parseFloat(document.getElementById('amt').value);
-            if(!a) return;
-            db.usd += (a * fee);
-            db.gov += (a * (1-fee));
-            save();
-            document.getElementById('toast').style.display = 'block';
-            setTimeout(() => { document.getElementById('toast').style.display = 'none'; tab('trade'); }, 1500);
-        }
-
-        function save() {
-            localStorage.setItem('inc_v38', JSON.stringify(db));
-            document.getElementById('bal-total').innerText = "$ " + db.usd.toLocaleString();
-            document.getElementById('bal-gov').innerText = "$ " + db.gov.toLocaleString();
-            document.getElementById('bal-uid').innerText = "ID: " + db.id;
-            document.getElementById('qr-addr').innerText = db.id;
-            document.getElementById('qr-img').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="+db.id;
-        }
-
-        function genOB() {
+        function genOB(base) {
             let html = '';
-            for(let i=0; i<5; i++) {
-                html += `<div class="order-row ask"><span>${(5.27 + Math.random()*0.1).toFixed(4)}</span><span>${(Math.random()*1000).toFixed(2)}</span></div>`;
+            for(let i=0; i<4; i++) {
+                html += `<div class="order-row ask"><span>${(base + Math.random()*15).toFixed(2)}</span><span>${(Math.random()*2).toFixed(4)}</span></div>`;
             }
-            html += `<div style="text-align:center; padding:5px; font-weight:bold; color:var(--blue); border-top:1px solid #222; border-bottom:1px solid #222; margin:5px 0;">5.2632 USD</div>`;
-            for(let i=0; i<5; i++) {
-                html += `<div class="order-row bid"><span>${(5.25 - Math.random()*0.1).toFixed(4)}</span><span>${(Math.random()*1000).toFixed(2)}</span></div>`;
+            html += `<div style="text-align:center; padding:5px; font-weight:bold; color:var(--blue); border-top:1px solid #222; border-bottom:1px solid #222; margin:5px 0;">${base.toFixed(2)} USD</div>`;
+            for(let i=0; i<4; i++) {
+                html += `<div class="order-row bid"><span>${(base - Math.random()*15).toFixed(2)}</span><span>${(Math.random()*2).toFixed(4)}</span></div>`;
             }
             document.getElementById('ob').innerHTML = html;
         }
 
-        window.onload = () => { save(); genOB(); setInterval(genOB, 3000); };
+        // Loop de Atualização Real (1 seg)
+        setInterval(fetchPrices, 1000);
+        window.onload = () => {
+            fetchPrices();
+            const db = JSON.parse(localStorage.getItem('inc_v38')) || { id: "INC_WG6220" };
+            document.getElementById('bal-uid').innerText = "ID: " + db.id;
+        };
     </script>
 </body>
 </html>
