@@ -3,150 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | NEXUS_CENTRAL</title>
+    <title>INC.OS | MULTI-ASSET_VAULT</title>
     <style>
-        :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --red: #ff3e3e; --text: #f0f0f0; --dim: #555; }
+        :root { --bg: #020202; --card: #0a0a0a; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #ffffff; --dim: #555; }
         * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        .screen { display: none; height: 100%; flex-direction: column; padding: 20px; overflow-y: auto; animation: fadeIn 0.4s ease; }
-        .active { display: flex; }
+        .screen { display: none; height: 100%; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .active { display: flex; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 22px; margin-bottom: 15px; }
-        .btn-main { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
-        .btn-outline { background: #000; color: var(--blue); border: 1px solid var(--blue); padding: 12px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; }
+        .card { background: var(--card); border: 1px solid #151515; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .btn-main { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; }
         
-        .bal-display { text-align: center; padding: 20px 0; }
-        .bal-val { font-size: 3em; font-weight: 900; color: #fff; letter-spacing: -1px; }
+        /* ASSET DISPLAY */
+        .asset-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #111; }
+        .asset-info { display: flex; align-items: center; gap: 12px; }
+        .asset-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.7em; }
+        .val-big { font-size: 1.1em; font-weight: bold; }
         
-        .input-group { background: #000; border: 1px solid #222; border-radius: 12px; padding: 15px; margin-top: 10px; }
-        .fiat-input { background: none; border: none; color: #fff; width: 100%; font-size: 1.2em; outline: none; }
-        
-        /* EXTRATO */
-        .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #111; font-size: 0.75em; }
-        .hist-label { color: var(--dim); }
-        .hist-val { font-weight: bold; }
-        .val-pos { color: var(--green); }
-        .val-neg { color: var(--red); }
+        .tab-nav { display: flex; background: #000; border-top: 1px solid #222; position: fixed; bottom: 0; width: 100%; }
+        .tab-item { flex: 1; padding: 15px; text-align: center; font-size: 0.6em; color: var(--dim); text-transform: uppercase; cursor: pointer; }
+        .tab-item.active { color: var(--blue); }
     </style>
 </head>
 <body>
 
-    <div id="scr-login" class="screen active" style="justify-content:center; text-align:center;">
-        <h1 style="font-size: 2.5em;">INC<span style="color:var(--blue)">.OS</span></h1>
+    <div id="scr-login" class="screen" style="justify-content:center; text-align:center;">
+        <h1 style="letter-spacing:2px;">INC<span style="color:var(--blue)">.OS</span></h1>
         <div class="card">
-            <div style="width:160px; height:160px; background:#fff; margin:0 auto 20px; padding:10px; border-radius:12px; cursor:pointer;" onclick="login()">
-                <img id="qr-log" src="" style="width:100%">
+            <div id="qr-box" style="width:160px; height:160px; background:#fff; margin:0 auto 20px; padding:10px; border-radius:12px; cursor:pointer;" onclick="createAccount()">
+                <img id="qr-img" src="" style="width:100%">
             </div>
-            <button class="btn-main" onclick="login()">Ativar Conta Lattice</button>
+            <button class="btn-main" onclick="createAccount()">Gerar Cofre Multiativos</button>
         </div>
     </div>
 
     <div id="scr-dash" class="screen">
-        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <div style="font-weight:900; font-size:1.2em;">INC.OS</div>
+        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <div style="font-weight:900;">COFRE INC</div>
             <div id="addr-tag" style="font-size:0.5em; color:var(--dim); background:#111; padding:5px 10px; border-radius:4px;">INC_8x...</div>
         </header>
 
-        <div class="bal-display">
-            <div style="font-size:0.6em; color:var(--dim); letter-spacing:1px;">SALDO DISPONÍVEL</div>
-            <div id="bal" class="bal-val">0.00 INC</div>
-        </div>
-
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <button class="btn-outline" onclick="show('scr-transfer')">ENVIAR</button>
-            <button class="btn-outline" style="background:var(--blue); color:#000;" onclick="show('scr-buy')">COMPRAR</button>
+        <div class="card" style="background: linear-gradient(145deg, #0a0a0a, #111);">
+            <div style="font-size:0.6em; color:var(--dim); margin-bottom:10px;">VALOR TOTAL ESTIMADO</div>
+            <div id="total-fiat" style="font-size:2.2em; font-weight:900; color:var(--green);">$ 0.00</div>
         </div>
 
         <div class="card">
-            <div style="font-size:0.6em; color:var(--dim); margin-bottom:15px;">EXTRATO DE TRANSAÇÕES</div>
-            <div id="history">
-                <div style="font-size:0.8em; color:#333; text-align:center;">Nenhuma movimentação detectada</div>
+            <div class="asset-row">
+                <div class="asset-info"><div class="asset-icon" style="background:var(--blue); color:#000;">INC</div><div>INC Coin</div></div>
+                <div class="val-big" id="bal-inc">0.00</div>
+            </div>
+            <div class="asset-row">
+                <div class="asset-info"><div class="asset-icon" style="background:#f7931a; color:#fff;">BTC</div><div>Bitcoin</div></div>
+                <div class="val-big" id="bal-btc">0.0000</div>
+            </div>
+            <div class="asset-row">
+                <div class="asset-info"><div class="asset-icon" style="background:#627eea; color:#fff;">ETH</div><div>Ethereum</div></div>
+                <div class="val-big" id="bal-eth">0.000</div>
+            </div>
+            <div class="asset-row">
+                <div class="asset-info"><div class="asset-icon" style="background:var(--gold); color:#000;">USD</div><div>Dólar Digital</div></div>
+                <div class="val-big" id="bal-usd">0.00</div>
             </div>
         </div>
     </div>
 
-    <div id="scr-buy" class="screen">
-        <div style="margin-bottom:20px; font-weight:bold; cursor:pointer;" onclick="show('scr-dash')">← CANCELAR</div>
+    <div id="scr-receive" class="screen">
+        <h2 style="font-size:1.2em;">Receber Ativos</h2>
         <div class="card">
-            <div style="font-size:0.6em; color:var(--dim);">QUANTIA (EUR/BRL)</div>
-            <div class="input-group"><input type="number" id="buy-amt" class="fiat-input" placeholder="0.00" oninput="calc()"></div>
-            <div id="prev" style="font-size:0.7em; color:var(--green); margin-top:10px; font-weight:bold;">Recebe: 0.00 INC</div>
-            <button class="btn-main" style="background:var(--green);" onclick="doBuy()">AUTORIZAR NO BANCO</button>
+            <select id="asset-select" style="width:100%; background:#111; color:#fff; border:1px solid #333; padding:15px; border-radius:12px; margin-bottom:15px;">
+                <option value="inc">INC (Rede Nativa)</option>
+                <option value="btc">Bitcoin (BTC)</option>
+                <option value="eth">Ethereum (ETH)</option>
+                <option value="usd">USDT / USDC</option>
+            </select>
+            <div style="background:#000; padding:20px; border-radius:12px; text-align:center; border:1px dashed #444;">
+                <div id="qr-receive" style="width:140px; height:140px; background:#fff; margin:0 auto 15px;"></div>
+                <div id="receive-addr" style="font-size:0.6em; color:var(--blue); word-break:break-all; font-family:monospace;">...</div>
+            </div>
+            <button class="btn-main" style="margin-top:20px; background:var(--green);" onclick="simularDeposito()">Simular Recebimento</button>
         </div>
     </div>
 
-    <div id="scr-transfer" class="screen">
-        <div style="margin-bottom:20px; font-weight:bold; cursor:pointer;" onclick="show('scr-dash')">← VOLTAR</div>
-        <div class="card">
-            <div style="font-size:0.6em; color:var(--dim);">ENDEREÇO DE DESTINO</div>
-            <div class="input-group"><input type="text" id="send-addr" class="fiat-input" style="font-size:0.8em;" placeholder="INC_8x..."></div>
-            <div style="font-size:0.6em; color:var(--dim); margin-top:15px;">VALOR PARA ENVIAR (INC)</div>
-            <div class="input-group"><input type="number" id="send-amt" class="fiat-input" placeholder="0.00"></div>
-            <button class="btn-main" style="background:var(--red); color:#fff;" onclick="doSend()">ASSINAR E ENVIAR</button>
-        </div>
-    </div>
+    <nav class="tab-nav" id="main-nav" style="display:none;">
+        <div class="tab-item active" onclick="showTab('scr-dash', this)">Carteira</div>
+        <div class="tab-item" onclick="showTab('scr-receive', this)">Receber</div>
+        <div class="tab-item" onclick="logout()">Sair</div>
+    </nav>
 
     <script>
-        let balance = 0.00;
-        let history = [];
+        let userData = JSON.parse(localStorage.getItem('inc_nexus')) || null;
 
-        function show(id) {
+        function showTab(id, el) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            if(el) el.classList.add('active');
         }
 
-        function login() {
-            const addr = "INC_8x" + Math.random().toString(16).slice(2, 10).toUpperCase();
-            document.getElementById('addr-tag').innerText = addr;
-            show('scr-dash');
+        function init() {
+            if (userData) {
+                document.getElementById('main-nav').style.display = 'flex';
+                document.getElementById('addr-tag').innerText = userData.address;
+                document.getElementById('bal-inc').innerText = userData.assets.inc.toFixed(2);
+                document.getElementById('bal-btc').innerText = userData.assets.btc.toFixed(4);
+                document.getElementById('bal-eth').innerText = userData.assets.eth.toFixed(3);
+                document.getElementById('bal-usd').innerText = userData.assets.usd.toFixed(2);
+                document.getElementById('receive-addr').innerText = userData.address;
+                showTab('scr-dash');
+            } else {
+                document.getElementById('qr-img').src = "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=GEN_" + Math.random();
+                showTab('scr-login');
+            }
         }
 
-        function calc() {
-            let v = document.getElementById('buy-amt').value || 0;
-            document.getElementById('prev').innerText = "Recebe (98%): " + (v * 5.26 * 0.98).toFixed(2) + " INC";
+        function createAccount() {
+            userData = {
+                address: "INC_8x" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+                assets: { inc: 0, btc: 0, eth: 0, usd: 0 }
+            };
+            localStorage.setItem('inc_nexus', JSON.stringify(userData));
+            init();
         }
 
-        function addHist(type, val, isPos) {
-            const item = { type, val, isPos, time: new Date().toLocaleTimeString() };
-            history.unshift(item);
-            renderHist();
+        function simularDeposito() {
+            const asset = document.getElementById('asset-select').value;
+            const amt = prompt("Quanto de " + asset.toUpperCase() + " você está enviando?");
+            if(!amt || isNaN(amt)) return;
+            
+            // Taxa de Arquiteto (2%)
+            let realAmt = amt * 0.98;
+            userData.assets[asset] += realAmt;
+            localStorage.setItem('inc_nexus', JSON.stringify(userData));
+            alert("Ativo recebido com sucesso! 2% de governança retidos no Cofre Central.");
+            init();
         }
 
-        function renderHist() {
-            const container = document.getElementById('history');
-            container.innerHTML = history.map(h => `
-                <div class="history-item">
-                    <div class="hist-label">${h.type}<br><small>${h.time}</small></div>
-                    <div class="hist-val ${h.isPos ? 'val-pos' : 'val-neg'}">${h.isPos ? '+' : '-'}${h.val.toFixed(2)} INC</div>
-                </div>
-            `).join('');
-        }
+        function logout() { if(confirm("Deseja fechar o cofre?")) { localStorage.clear(); location.reload(); } }
 
-        function doBuy() {
-            let v = document.getElementById('buy-amt').value;
-            if(!v) return;
-            let gain = v * 5.26 * 0.98;
-            let gov = v * 5.26 * 0.02;
-            balance += gain;
-            document.getElementById('bal').innerText = balance.toLocaleString() + " INC";
-            addHist("Depósito Bancário", gain, true);
-            addHist("Taxa Gov (2%)", gov, false);
-            show('scr-dash');
-        }
-
-        function doSend() {
-            let v = parseFloat(document.getElementById('send-amt').value);
-            if(!v || v > balance) return alert("Saldo insuficiente ou valor inválido.");
-            balance -= v;
-            document.getElementById('bal').innerText = balance.toLocaleString() + " INC";
-            addHist("Transferência Enviada", v, false);
-            alert("Transferência assinada pela Grade Lattice!");
-            show('scr-dash');
-        }
-
-        document.getElementById('qr-log').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=LOGIN_" + Math.random();
+        init();
     </script>
 </body>
 </html>
