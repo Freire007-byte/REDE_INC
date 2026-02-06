@@ -3,153 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | SOVEREIGN_CORE_v5</title>
+    <title>INC.OS | NEXUS TELEMETRY</title>
     <style>
-        :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #f0f0f0; --dim: #555; }
-        * { box-sizing: border-box; font-family: "Segoe UI", sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #020202; --card: #0a0a0a; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --red: #ff3e3e; --text: #ffffff; --dim: #555; }
+        * { box-sizing: border-box; font-family: "SF Pro Display", "Segoe UI", sans-serif; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* TELAS */
-        .screen { display: none; height: 100%; flex-direction: column; padding: 25px; overflow-y: auto; animation: fadeIn 0.4s ease; }
+        /* HEADER TELEMETRIA */
+        .telemetry-bar { background: #111; padding: 10px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; font-family: monospace; font-size: 0.6em; letter-spacing: 1px; }
+        .stat-item { display: flex; gap: 5px; }
+        .stat-item b { color: var(--green); }
+
+        .screen { display: none; height: 100%; flex-direction: column; padding: 20px; overflow-y: auto; animation: fadeIn 0.4s ease; }
         .active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* COMPONENTES */
-        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 24px; padding: 25px; margin-bottom: 20px; }
-        .btn-blue { background: var(--blue); color: #000; border: none; padding: 20px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; }
-        .btn-green { background: var(--green); color: #000; border: none; padding: 20px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; }
-        .input-box { background: #000; border: 1px solid #333; border-radius: 12px; padding: 18px; color: #fff; width: 100%; font-size: 1.2em; outline: none; margin: 15px 0; }
-        
-        /* DASHBOARD ESPECÍFICO */
-        .balance-label { font-size: 0.7em; color: var(--dim); letter-spacing: 2px; }
-        .balance-value { font-size: 2.8em; font-weight: 900; color: var(--blue); margin: 10px 0; }
-        
-        /* BANCOS */
-        .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .bank-item { background: #111; border: 1px solid #222; padding: 15px; border-radius: 12px; text-align: center; font-size: 0.7em; cursor: pointer; }
-        .bank-item.selected { border-color: var(--blue); background: rgba(0,170,255,0.1); }
+        .card { background: var(--card); border: 1px solid #151515; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .btn-prime { background: var(--blue); color: #000; border: none; padding: 20px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; }
 
-        /* OVERLAY BANCÁRIO */
-        #bank-auth { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; align-items: center; justify-content: center; flex-direction: column; padding: 40px; }
-        .loader { width: 60px; height: 60px; border: 4px solid #111; border-top: 4px solid var(--blue); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        /* QR & EXCHANGE */
+        .qr-portal { width: 180px; height: 180px; background: #fff; padding: 10px; border-radius: 12px; margin: 15px auto; position: relative; }
+        .scan-bar { position: absolute; width: 100%; height: 2px; background: var(--blue); top: 0; animation: scan 2s infinite linear; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        .pair-input { background: #000; border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; align-items: center; margin: 15px 0; }
+        .val-input { background: none; border: none; color: #fff; font-size: 1.5em; font-weight: bold; width: 100%; outline: none; }
     </style>
 </head>
 <body>
 
-    <div id="screen-onboarding" class="screen active" style="justify-content: center;">
-        <div style="text-align: center; margin-bottom: 40px;">
-            <h1 style="font-size: 2.5em; letter-spacing: -1px; margin:0;">INC<span style="color:var(--blue)">.OS</span></h1>
-            <p style="color:var(--dim); font-size: 0.8em;">SISTEMA OPERACIONAL FINANCEIRO</p>
-        </div>
-        <div class="card">
-            <h2 style="margin-top:0; font-size:1.2em;">Criar Conta Soberana</h2>
-            <p style="font-size:0.7em; color:#888;">Gere sua identidade de 2.500 bits na Grade Lattice para começar.</p>
-            <button class="btn-blue" onclick="createAccount()">GERAR CHAVE ATÔMICA</button>
-        </div>
+    <div class="telemetry-bar">
+        <div class="stat-item">LATENCY: <b id="latency">-- ms</b></div>
+        <div class="stat-item">TPS: <b id="tps">--</b></div>
+        <div class="stat-item">NODES: <b>2,500</b></div>
     </div>
 
-    <div id="screen-dash" class="screen">
-        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <div style="font-weight:bold; font-size:1.2em;">INC<span style="color:var(--blue)">.OS</span></div>
-            <div style="font-size:0.5em; padding:5px 10px; border:1px solid var(--green); color:var(--green); border-radius:20px;">REDE_ATIVA</div>
-        </header>
+    <div id="scr-gen" class="screen active" style="justify-content:center; text-align:center;">
+        <h1 style="margin:0; letter-spacing:2px;">INC<span style="color:var(--blue)">.NEXUS</span></h1>
+        <div class="qr-portal" onclick="on()">
+            <div class="scan-bar"></div>
+            <img id="qr" src="" style="width:100%">
+        </div>
+        <button class="btn-prime" onclick="on()">Acessar Terminal</button>
+    </div>
 
+    <div id="scr-ex" class="screen">
         <div class="card">
-            <div class="balance-label">SALDO TOTAL</div>
-            <div id="main-balance" class="balance-value">0.00 INC</div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-green" style="padding:12px; font-size:0.7em;" onclick="goToBuy()">DEPOSITAR / COMPRAR</button>
+            <div style="font-size:0.6em; color:var(--dim);">CONVERSOR GLOBAL</div>
+            <div class="pair-input">
+                <input type="number" id="amt" class="val-input" placeholder="0.00" oninput="up()">
+                <select id="cur" style="background:#222; color:var(--blue); border:none; padding:8px; border-radius:4px; font-weight:bold;">
+                    <option value="5.26">EUR</option>
+                    <option value="0.95">BRL</option>
+                    <option value="4.88">USD</option>
+                </select>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.7em;">
+                <span style="color:var(--dim);">Estimado (98%):</span>
+                <b id="res" style="color:var(--green);">0.00 INC</b>
             </div>
         </div>
 
         <div class="card" style="border-left: 4px solid var(--gold);">
-            <div class="balance-label" style="color:var(--gold)">GOVERNANÇA (2%)</div>
-            <div id="gov-balance" style="font-size:1.5em; font-weight:bold; color:var(--gold); margin-top:5px;">0.00 INC</div>
-        </div>
-    </div>
-
-    <div id="screen-buy" class="screen">
-        <div style="margin-bottom:20px; font-weight:bold; cursor:pointer;" onclick="goDash()">← VOLTAR</div>
-        <div class="card">
-            <div class="balance-label">VALOR DO APORTE (EUR/BRL)</div>
-            <input type="number" id="buy-amount" class="input-box" placeholder="0.00" oninput="liveConvert()">
-            <div id="calc-preview" style="font-size:0.8em; color:var(--green); font-weight:bold;">Recebe: 0.00 INC</div>
+            <div style="font-size:0.6em; color:var(--gold);">CUSTÓDIA ARQUITETO (2%)</div>
+            <div id="gov" style="font-size:1.8em; font-weight:bold; color:var(--gold); margin-top:5px;">0.00 INC</div>
         </div>
 
-        <div class="card">
-            <div class="balance-label">CONECTAR INSTITUIÇÃO BANCÁRIA</div>
-            <div class="bank-grid">
-                <div class="bank-item" onclick="selB(this)">Santander</div>
-                <div class="bank-item" onclick="selB(this)">Revolut</div>
-                <div class="bank-item" onclick="selB(this)">Itaú / Pix</div>
-                <div class="bank-item" onclick="selB(this)">Nubank</div>
-            </div>
-            <button class="btn-blue" style="margin-top:20px;" onclick="processBank()">AUTORIZAR E FINALIZAR</button>
-        </div>
-    </div>
-
-    <div id="bank-auth">
-        <div class="loader"></div>
-        <h3 id="auth-status" style="margin-top:20px; letter-spacing:1px;">CONECTANDO AO BANCO...</h3>
-        <p style="font-size:0.6em; color:#555;">CRIPTOGRAFIA LATTICE ASSINANDO TRANSAÇÃO</p>
+        <button class="btn-prime" style="background:var(--green);" onclick="alert('Conectando ao Gateway...')">Depositar Agora</button>
     </div>
 
     <script>
-        let currentBalance = 789442.10;
-        let currentGov = 16104.62;
-
-        function show(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        function on() { document.getElementById('scr-gen').classList.remove('active'); document.getElementById('scr-ex').classList.add('active'); }
+        function up() {
+            let v = document.getElementById('amt').value || 0;
+            let r = document.getElementById('cur').value;
+            document.getElementById('res').innerText = (v * r * 0.98).toFixed(2) + " INC";
         }
 
-        function createAccount() {
-            // Simula a criação real da conta com delay de segurança
-            alert("Gerando Chave de 2500 bits na Grade Lattice...");
-            show('screen-dash');
-            updateBalances();
-        }
-
-        function updateBalances() {
-            document.getElementById('main-balance').innerText = currentBalance.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + " INC";
-            document.getElementById('gov-balance').innerText = currentGov.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + " INC";
-        }
-
-        function goToBuy() { show('screen-buy'); }
-        function goDash() { show('screen-dash'); }
-
-        function selB(e) {
-            document.querySelectorAll('.bank-item').forEach(b => b.classList.remove('selected'));
-            e.classList.add('selected');
-        }
-
-        function liveConvert() {
-            let v = document.getElementById('buy-amount').value || 0;
-            document.getElementById('calc-preview').innerText = "Recebe: " + (v * 5.26 * 0.98).toFixed(2) + " INC";
-        }
-
-        function processBank() {
-            let amt = document.getElementById('buy-amount').value;
-            if(!amt) return alert("Insira um valor.");
+        // MOTOR DE TELEMETRIA
+        function telemetry() {
+            // Simula latência variando entre 12ms e 28ms
+            const lat = Math.floor(Math.random() * (28 - 12 + 1)) + 12;
+            // Simula TPS variando conforme o "tráfego" da rede
+            const tps = (Math.random() * (450 - 380) + 380).toFixed(1);
             
-            document.getElementById('bank-auth').style.display = 'flex';
-            
-            setTimeout(() => { document.getElementById('auth-status').innerText = "AUTORIZANDO SALDO..."; }, 2000);
-            setTimeout(() => { document.getElementById('auth-status').innerText = "EXECUTANDO TAXA DE 2%..."; }, 4000);
-            
-            setTimeout(() => {
-                let gain = amt * 5.26 * 0.98;
-                let gov = amt * 5.26 * 0.02;
-                currentBalance += gain;
-                currentGov += gov;
-                
-                document.getElementById('bank-auth').style.display = 'none';
-                updateBalances();
-                show('screen-dash');
-                alert("SUCESSO: Aporte integrado à rede INC.");
-            }, 6000);
+            document.getElementById('latency').innerText = lat + " ms";
+            document.getElementById('tps').innerText = tps;
         }
+
+        setInterval(telemetry, 2000);
+        telemetry();
+        document.getElementById('qr').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ROOT_" + Math.random();
     </script>
 </body>
 </html>
