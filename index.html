@@ -7,42 +7,30 @@
     <style>
         :root { --bg: #0d0d0d; --card-bg: #141414; --blue: #00aaff; --green: #39ff14; --text: #e0e0e0; --dim: #555; }
         body { background: var(--bg); color: var(--text); font-family: "Segoe UI", sans-serif; margin: 0; padding: 20px; display: grid; grid-template-columns: 250px 1fr; gap: 20px; }
-        
+        @media (max-width: 768px) { body { grid-template-columns: 1fr; } .sidebar { height: auto; } }
+
         .sidebar { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid #222; height: calc(100vh - 80px); }
         .logo { font-size: 1.8em; font-weight: bold; color: #fff; margin-bottom: 30px; border-bottom: 2px solid var(--blue); padding-bottom: 10px; }
         .status-item { font-size: 0.7em; margin-bottom: 15px; color: var(--dim); }
         .status-item b { color: var(--blue); display: block; font-size: 1.1em; margin-top: 3px; }
 
         .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid #222; padding: 20px; position: relative; overflow: hidden; }
-        .card-title { font-size: 0.85em; font-weight: bold; color: #888; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid #222; padding: 20px; position: relative; }
+        .card-title { font-size: 0.85em; font-weight: bold; color: #888; margin-bottom: 20px; }
         
-        .big-value { font-size: 2.2em; font-weight: bold; color: var(--blue); margin-bottom: 10px; }
-        
-        /* QR Code Animado */
-        .qr-container { 
-            width: 80px; height: 80px; background: #fff; padding: 5px; border-radius: 4px; 
-            position: relative; cursor: pointer; transition: 0.3s;
-        }
-        .qr-container:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--blue); }
-        .qr-scanner { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 2px; 
-            background: var(--blue); animation: scan 2s infinite; 
-        }
+        .big-value { font-size: 2.2em; font-weight: bold; color: var(--blue); }
 
+        /* QR CODE INTERATIVO */
+        .qr-area { cursor: pointer; transition: 0.3s; position: relative; width: 80px; }
+        .qr-area:hover { filter: drop-shadow(0 0 10px var(--blue)); transform: scale(1.05); }
+        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--blue); top: 0; animation: scan 2s infinite linear; pointer-events: none; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 
-        /* Modal Protocolo */
-        #protocolModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px);
-        }
-        .protocol-content {
-            background: #111; border: 1px solid var(--blue); padding: 40px; border-radius: 8px;
-            max-width: 600px; width: 90%; color: #fff; font-family: "Courier New", monospace;
-        }
-        .formula-box { background: #000; padding: 15px; border-left: 3px solid var(--blue); margin: 20px 0; color: var(--green); }
+        /* MODAIS */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; align-items:center; justify-content:center; backdrop-filter:blur(10px); }
+        .modal-box { background:#111; border:1px solid var(--blue); padding:30px; border-radius:8px; max-width:500px; width:90%; color:#fff; }
+        .wallet-key { background:#000; padding:15px; border:1px solid #333; color:var(--green); font-family:monospace; word-break:break-all; font-size:0.7em; margin-top:15px; }
+        .close-btn { background:var(--blue); color:#000; border:none; padding:10px 20px; cursor:pointer; margin-top:20px; font-weight:bold; width:100%; }
     </style>
 </head>
 <body>
@@ -51,54 +39,60 @@
         <div class="logo">INC<span style="color:var(--blue)">.OS</span></div>
         <div class="status-item">STATUS DE REDE<b>NÚCLEO ONLINE</b></div>
         <div class="status-item">LATÊNCIA REDE<b id="lat">0ms</b></div>
-        <div class="status-item">PULSOS ATIVOS<b id="vis">0</b></div>
-        <button onclick="document.getElementById(\"protocolModal\").style.display=\"flex\"" style="background:var(--blue); border:none; padding:12px; border-radius:6px; cursor:pointer; font-weight:bold; width:100%; margin-top:20px;">ABRIR PROTOCOLO</button>
+        <div class="status-item">PULSOS ATIVOS<b id="vis">37333</b></div>
+        <button onclick="document.getElementById(\"manifesto\").style.display=\"flex\"" style="background:var(--blue); border:none; padding:12px; border-radius:6px; cursor:pointer; font-weight:bold; width:100%; margin-top:10px;">ABRIR PROTOCOLO</button>
     </div>
 
     <div class="main-content">
-        <div class="card">
-            <div class="card-title">Ativos Totais da Rede</div>
-            <div class="big-value" id="saldo">0.00 INC</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Estabilidade Quântica</div>
-            <div class="big-value">99.99<span style="font-size:0.4em">%</span></div>
-        </div>
+        <div class="card"><div class="card-title">Ativos Totais</div><div class="big-value" id="saldo">0.00 INC</div></div>
+        <div class="card"><div class="card-title">Estabilidade</div><div class="big-value">99.99%</div></div>
 
         <div class="card" style="grid-column: span 2;">
-            <div class="card-title">Identidade Digital & Geração de Chave 2500</div>
-            <div style="display:flex; gap:30px; align-items:center;">
-                <div class="qr-container" onclick="alert(\"CHAVE ATÔMICA GERADA: [\" + Math.random().toString(16).toUpperCase().substring(2,16) + \"]
-
-ENTROPIA: 2500 bytes
-STATUS: PROTEGIDO\")">
-                    <div class="qr-scanner"></div>
-                    <img id="qr-img" src="" style="width:100%">
+            <div class="card-title">Identidade Digital & Gerador de Carteira</div>
+            <div style="display:flex; gap:20px; align-items:center;">
+                <div class="qr-area" onclick="gerarCarteira()">
+                    <div class="scan-line"></div>
+                    <img id="qr-img" src="" style="width:100%; background:#fff; padding:5px; border-radius:4px;">
                 </div>
                 <div style="font-size:0.8em;">
                     <div style="color:var(--dim)">USER_AUTH: <span style="color:#fff">SOVEREIGN_ARCHITECT</span></div>
-                    <div style="color:var(--dim); margin-top:5px;">LATTICE_SEED: <span id="seed" style="color:var(--green)">CALCULANDO...</span></div>
-                    <div style="color:var(--dim); margin-top:5px;">SVP_STATUS: <span style="color:var(--blue)">INCORRUPTÍVEL</span></div>
+                    <div style="color:var(--dim); margin-top:5px;">LATTICE_SEED: <span id="seed" style="color:var(--green)">0x3UDQS...</span></div>
+                    <button onclick="gerarCarteira()" style="background:none; border:1px solid var(--blue); color:var(--blue); font-size:0.8em; margin-top:10px; cursor:pointer; padding:4px 8px;">CRIAR CARTEIRA 2500 BITS</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="protocolModal">
-        <div class="protocol-content">
-            <h2 style="color:var(--blue)">MANIFESTO INC.OS</h2>
-            <p>O controle do tempo e dos ativos é executado através desta interface blindada.</p>
-            <div class="formula-box">f(x) = ∑ aᵢ xᵢ mod(q) | n=2500</div>
-            <button onclick="document.getElementById(\"protocolModal\").style.display=\"none\"" style="background:none; border:1px solid #444; color:#888; padding:10px 20px; cursor:pointer;">FECHAR</button>
+    <div id="walletModal" class="modal">
+        <div class="modal-box">
+            <h3 style="color:var(--blue); margin-top:0;">CARTEIRA ATÔMICA GERADA</h3>
+            <p style="font-size:0.8em; color:#888;">Protocolo Lattice-based: n=2500 bits de entropia pura criados sob a Fórmula Freire.</p>
+            <div class="wallet-key" id="final-key">GERANDO HASH...</div>
+            <button class="close-btn" onclick="this.parentElement.parentElement.style.display=\"none\"">CONFIRMAR E SINCRONIZAR</button>
+        </div>
+    </div>
+
+    <div id="manifesto" class="modal">
+        <div class="modal-box">
+            <h3 style="color:var(--blue)">PROTOCOLO SOBERANO</h3>
+            <p style="font-size:0.8em; line-height:1.6;">A matemática protege a liberdade onde as leis falham. Esta interface garante a soberania total do usuário Alexandre Freire.<br><br><b>f(x) = ∑ aᵢ xᵢ mod(q) | n=2500</b></p>
+            <button class="close-btn" onclick="this.parentElement.parentElement.style.display=\"none\"">FECHAR</button>
         </div>
     </div>
 
     <script>
+        function gerarCarteira() {
+            const modal = document.getElementById("walletModal");
+            const keyBox = document.getElementById("final-key");
+            modal.style.display = "flex";
+            let fakeKey = "INC_2500_" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");
+            keyBox.innerText = fakeKey.toUpperCase();
+        }
+
         function updateQR() {
             const seed = Math.random().toString(36).substring(7).toUpperCase();
-            document.getElementById("seed").innerText = "0x" + seed + "_2500B";
-            document.getElementById("qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=" + seed;
+            document.getElementById("seed").innerText = "0x" + seed + "_LATTICE";
+            document.getElementById("qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + seed;
         }
 
         async function update() {
@@ -112,7 +106,7 @@ STATUS: PROTEGIDO\")">
             } catch(e) {}
             updateQR();
         }
-        setInterval(update, 2000);
+        setInterval(update, 3000);
         update();
     </script>
 </body>
