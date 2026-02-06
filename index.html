@@ -3,101 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INC.OS | SOVEREIGN_CORE</title>
+    <title>INC.OS | CORE_v4</title>
     <style>
-        :root { --bg: #0d0d0d; --card-bg: #141414; --blue: #00aaff; --green: #39ff14; --text: #e0e0e0; --dim: #555; }
-        body { background: var(--bg); color: var(--text); font-family: "Segoe UI", sans-serif; margin: 0; padding: 20px; display: grid; grid-template-columns: 250px 1fr; gap: 20px; }
-        @media (max-width: 768px) { body { grid-template-columns: 1fr; } .sidebar { height: auto; } }
+        :root { --bg: #0a0a0a; --card: #111; --blue: #00aaff; --green: #39ff14; --text: #e0e0e0; }
+        body { background: var(--bg); color: var(--text); font-family: "Segoe UI", sans-serif; margin: 0; padding: 15px; display: grid; grid-template-columns: 240px 1fr; gap: 15px; }
+        @media (max-width: 768px) { body { grid-template-columns: 1fr; } }
 
-        .sidebar { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid #222; height: calc(100vh - 80px); }
-        .logo { font-size: 1.8em; font-weight: bold; color: #fff; margin-bottom: 30px; border-bottom: 2px solid var(--blue); padding-bottom: 10px; }
-        .status-item { font-size: 0.7em; margin-bottom: 15px; color: var(--dim); }
-        .status-item b { color: var(--blue); display: block; font-size: 1.1em; margin-top: 3px; }
+        .sidebar { background: var(--card); padding: 20px; border-radius: 8px; border: 1px solid #222; }
+        .logo { font-size: 1.5em; font-weight: bold; margin-bottom: 25px; border-bottom: 2px solid var(--blue); }
+        .status-item { font-size: 0.65em; color: #555; margin-bottom: 12px; }
+        .status-item b { color: var(--blue); display: block; font-size: 1.1em; }
 
-        .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid #222; padding: 20px; position: relative; }
-        .card-title { font-size: 0.85em; font-weight: bold; color: #888; margin-bottom: 20px; }
-        
-        .big-value { font-size: 2.2em; font-weight: bold; color: var(--blue); transition: 0.8s ease; }
-        .sync-active { color: var(--green) !important; text-shadow: 0 0 15px var(--green); }
+        .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: var(--card); border-radius: 8px; border: 1px solid #222; padding: 18px; }
+        .big-value { font-size: 2em; font-weight: bold; color: var(--blue); }
+        .active-text { color: var(--green) !important; text-shadow: 0 0 10px var(--green); }
 
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(15px); }
-        .modal-box { background:#0a0a0a; border: 1px solid var(--blue); padding:40px; border-radius:8px; max-width:500px; width:90%; text-align: center; }
-        .wallet-key { background:#000; padding:15px; border:1px solid #333; color:var(--green); font-family:monospace; word-break:break-all; font-size:0.7em; margin:20px 0; border-left: 4px solid var(--green); }
-        .confirm-btn { background:var(--blue); color:#000; border:none; padding:15px; cursor:pointer; font-weight:bold; width:100%; border-radius: 4px; font-size: 1em; transition: 0.3s; }
-        .confirm-btn:hover { background: var(--green); }
+        /* QR CODE FUNCIONAL */
+        .qr-box { 
+            width: 100px; height: 100px; background: #fff; padding: 5px; border-radius: 4px; 
+            cursor: pointer; position: relative; transition: 0.3s; margin-right: 20px;
+        }
+        .qr-box:hover { box-shadow: 0 0 20px var(--blue); transform: scale(1.05); }
+        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--blue); top: 0; animation: scan 2s infinite linear; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-content { background: #000; border: 1px solid var(--blue); padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; }
+        .key-display { background: #050505; border: 1px solid #222; padding: 15px; color: var(--green); font-family: monospace; font-size: 0.7em; margin: 20px 0; word-break: break-all; }
+        .btn-sync { background: var(--blue); color: #000; border: none; padding: 15px; font-weight: bold; width: 100%; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <div class="logo">INC<span style="color:var(--blue)">.OS</span></div>
-        <div class="status-item">STATUS DE REDE<b id="node-status">STANDBY</b></div>
-        <div class="status-item">LATÊNCIA REDE<b id="lat">0ms</b></div>
-        <div class="status-item">PULSOS ATIVOS<b id="vis">37333</b></div>
-        <button onclick="document.getElementById(\"manifesto\").style.display=\"flex\"" style="background:none; border:1px solid #333; color:#555; padding:8px; border-radius:4px; width:100%; margin-top:10px; cursor:pointer; font-size:0.7em;">PROTOCOLO</button>
+        <div class="status-item">NODE STATUS<b id="node-status">STANDBY</b></div>
+        <div class="status-item">LATÊNCIA<b id="lat">0ms</b></div>
+        <div class="status-item">PULSOS ATIVOS<b>37333</b></div>
     </div>
 
     <div class="main-content">
-        <div class="card"><div class="card-title">Ativos Totais</div><div class="big-value" id="saldo">OFFLINE</div></div>
-        <div class="card"><div class="card-title">Sincronia Lattice</div><div class="big-value" id="sync-status">0.00%</div></div>
+        <div class="card">
+            <div style="font-size:0.7em;color:#555">ATIVOS TOTAIS</div>
+            <div class="big-value" id="saldo">OFFLINE</div>
+        </div>
+        <div class="card">
+            <div style="font-size:0.7em;color:#555">SINCRONIA LATTICE</div>
+            <div class="big-value" id="sync-val">0.00%</div>
+        </div>
 
-        <div class="card" style="grid-column: span 2;">
-            <div class="card-title">Chave Atômica de 2500 Bits (Fórmula Freire)</div>
-            <div style="display:flex; gap:30px; align-items:center;">
-                <div onclick="abrirCofre()" style="cursor:pointer; background:#fff; padding:5px; border-radius:4px; width:80px; height:80px;">
-                    <img id="qr-img" src="" style="width:100%;">
-                </div>
-                <div style="font-size:0.8em;">
-                    <div>IDENTIDADE: <span id="user-id" style="color:#fff">AGUARDANDO_AUTORIZACAO</span></div>
-                    <div style="margin-top:5px;">COFRE: <span id="sec-lvl" style="color:var(--blue)">BLOQUEADO</span></div>
-                    <button onclick="abrirCofre()" style="margin-top:10px; background:var(--blue); border:none; color:#000; padding:10px 20px; font-weight:bold; cursor:pointer; border-radius:4px;">GERAR CHAVE 2500</button>
-                </div>
+        <div class="card" style="grid-column: span 2; display: flex; align-items: center;">
+            <div class="qr-box" onclick="abrirCofre()">
+                <div class="scan-line"></div>
+                <img id="qr-img" src="" style="width:100%">
+            </div>
+            <div style="font-size: 0.8em;">
+                <div style="color:#555">ID: <span id="user-tag" style="color:#fff">AGUARDANDO...</span></div>
+                <div style="margin-top:5px; color:#555">SEC: <span id="sec-tag" style="color:var(--blue)">BLOQUEADO</span></div>
+                <button onclick="abrirCofre()" style="margin-top:10px; background:var(--blue); border:none; padding:8px 12px; font-weight:bold; cursor:pointer; border-radius:4px;">CRIAR CHAVE 2500</button>
             </div>
         </div>
     </div>
 
-    <div id="walletModal" class="modal">
-        <div class="modal-box">
+    <div id="modalCofre" class="modal">
+        <div class="modal-content">
             <h2 style="color:var(--blue); margin:0;">GERAÇÃO DE CHAVE</h2>
-            <p style="font-size:0.8em; color:#666;">Injetando entropia baseada em grades (SVP).</p>
-            <div class="wallet-key" id="final-key">...</div>
-            <button class="confirm-btn" id="btnSinc" onclick="finalizarSincronia()">CONFIRMAR E SINCRONIZAR</button>
-        </div>
-    </div>
-
-    <div id="manifesto" class="modal">
-        <div class="modal-box">
-            <h3 style="color:var(--blue)">MANIFESTO SOBERANO</h3>
-            <p style="font-size:0.8em; line-height:1.6;">f(x) = ∑ aᵢ xᵢ mod(q) | n=2500<br><br>A matemática protege a liberdade onde as leis falham.</p>
-            <button class="confirm-btn" onclick="document.getElementById(\"manifesto\").style.display=\"none\"">FECHAR</button>
+            <p style="font-size:0.8em; color:#666;">n=2500 bits | Fórmula Freire | SVP Integrity</p>
+            <div class="key-display" id="chave-atômica">...</div>
+            <button class="btn-sync" onclick="sincronizarCore()">CONFIRMAR E SINCRONIZAR</button>
         </div>
     </div>
 
     <script>
         let chaveMestra = "";
-        let sincronizado = false;
+        let isSinc = false;
 
         function abrirCofre() {
-            chaveMestra = "INC_2500_" + Math.random().toString(16).slice(2, 18).toUpperCase() + Math.random().toString(16).slice(2, 18).toUpperCase();
-            document.getElementById("final-key").innerText = chaveMestra;
-            document.getElementById("walletModal").style.display = "flex";
+            chaveMestra = "INC_2500_" + Array.from({length: 40}, () => Math.floor(Math.random() * 16).toString(16)).join("").toUpperCase();
+            document.getElementById("chave-atômica").innerText = chaveMestra;
+            document.getElementById("modalCofre").style.display = "flex";
         }
 
-        function finalizarSincronia() {
-            sincronizado = true;
-            document.getElementById("walletModal").style.display = "none";
-            document.getElementById("user-id").innerText = chaveMestra.substring(0, 16) + "...";
-            document.getElementById("sec-lvl").innerText = "LATTICE_ACTIVE";
-            document.getElementById("sec-lvl").style.color = "var(--green)";
-            document.getElementById("sync-status").innerText = "100.00%";
-            document.getElementById("sync-status").classList.add("sync-active");
-            document.getElementById("saldo").classList.add("sync-active");
-            document.getElementById("node-status").innerText = "MODO SOBERANO";
-            document.getElementById("node-status").style.color = "var(--green)";
-            update();
-            alert("SINCRONIA ESTABELECIDA
-Chave Atômica vinculada ao Núcleo.");
+        function sincronizarCore() {
+            isSinc = true;
+            document.getElementById("modalCofre").style.display = "none";
+            document.getElementById("node-status").innerText = "SOVEREIGN";
+            document.getElementById("node-status").className = "active-text";
+            document.getElementById("user-tag").innerText = chaveMestra.substring(0, 12) + "...";
+            document.getElementById("sec-tag").innerText = "LATTICE_ACTIVE";
+            document.getElementById("sec-tag").style.color = "var(--green)";
+            document.getElementById("sync-val").innerText = "100.00%";
+            document.getElementById("sync-val").classList.add("active-text");
+            document.getElementById("saldo").classList.add("active-text");
+            alert("SINCRONIA ESTABELECIDA.");
         }
 
         async function update() {
@@ -105,10 +105,7 @@ Chave Atômica vinculada ao Núcleo.");
             try {
                 const r = await fetch("/api/nano_status");
                 const d = await r.json();
-                if (sincronizado) {
-                    document.getElementById("saldo").innerText = d.saldo.toLocaleString("en-US", {minimumFractionDigits: 2}) + " INC";
-                }
-                document.getElementById("vis").innerText = d.visitas;
+                if(isSinc) document.getElementById("saldo").innerText = d.saldo.toLocaleString("en-US", {minimumFractionDigits: 2}) + " INC";
                 document.getElementById("lat").innerText = Math.round(performance.now() - t0) + "ms";
             } catch(e) {}
             document.getElementById("qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + Math.random();
