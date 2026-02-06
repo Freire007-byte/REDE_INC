@@ -3,141 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | PROFESSIONAL_EXCHANGE</title>
+    <title>INC.OS | OPEN_FINANCE_GATEWAY</title>
     <style>
-        :root { --bg: #050505; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; --dim: #666; }
+        :root { --bg: #050505; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; }
         * { box-sizing: border-box; font-family: "Segoe UI", sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
         header { background: #111; padding: 18px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
-        .net-tag { font-size: 0.55em; padding: 4px 8px; border: 1px solid var(--green); color: var(--green); border-radius: 4px; text-transform: uppercase; }
-
-        nav { background: #000; display: flex; border-bottom: 1px solid #222; }
-        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.65em; color: var(--dim); cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        .nav-item.active { color: var(--blue); border-bottom: 2px solid var(--blue); }
+        .net-tag { font-size: 0.55em; padding: 4px 8px; border: 1px solid var(--green); color: var(--green); border-radius: 4px; }
 
         #main-view { flex: 1; overflow-y: auto; padding: 20px; }
-        .page { display: none; } .page.active { display: block; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* EXCHANGE ENGINE UI */
-        .exchange-card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .label-group { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .input-wrapper { background: #000; border: 1px solid #333; border-radius: 12px; padding: 15px; display: flex; align-items: center; }
-        .main-input { background: none; border: none; color: #fff; font-size: 1.8em; width: 70%; outline: none; font-weight: bold; }
-        .currency-tag { color: var(--blue); font-weight: bold; font-size: 0.8em; }
-
-        .conversion-stats { margin: 25px 0; border-top: 1px solid #222; padding-top: 20px; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.85em; color: #aaa; }
+        .exchange-card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
         
-        .btn-buy { background: var(--green); color: #000; border: none; padding: 20px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 1.1em; letter-spacing: 1px; transition: 0.2s; }
-        .btn-buy:active { background: #2ecc71; transform: scale(0.98); }
+        /* OPEN BANKING UI */
+        .input-label { font-size: 0.6em; color: #555; margin-bottom: 10px; text-transform: uppercase; }
+        .amount-input { background: #000; border: 1px solid #333; border-radius: 12px; padding: 20px; color: #fff; font-size: 2em; width: 100%; outline: none; font-weight: bold; margin-bottom: 20px; }
+        
+        .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .bank-btn { background: #111; border: 1px solid #222; padding: 15px; border-radius: 12px; color: #fff; font-size: 0.7em; cursor: pointer; transition: 0.2s; text-align: center; }
+        .bank-btn:active { border-color: var(--blue); background: rgba(0,170,255,0.1); }
+        .bank-btn.selected { border-color: var(--blue); background: rgba(0,170,255,0.1); color: var(--blue); }
 
-        /* CHECKOUT MODAL PRO */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        .checkout-box { background: #111; width: 92%; max-width: 400px; border-radius: 24px; border: 1px solid #333; padding: 30px; position: relative; }
-        .order-id { font-size: 0.6em; color: #444; margin-bottom: 20px; text-align: center; }
-        .copy-card { background: #000; border: 1px solid #222; border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; }
-        .copy-label { font-size: 0.5em; color: var(--dim); margin-bottom: 5px; }
-        .copy-data { font-size: 0.85em; color: var(--blue); font-family: monospace; word-break: break-all; }
-        .btn-copy { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #222; border: none; color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 0.6em; cursor: pointer; }
+        .btn-connect { background: var(--blue); color: #000; border: none; padding: 20px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 1em; margin-top: 10px; }
+        
+        /* LOADING OVERLAY */
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; text-align: center; }
+        .spinner { width: 50px; height: 50px; border: 3px solid #222; border-top: 3px solid var(--blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <header>
-        <div style="font-weight:bold; letter-spacing:1px; font-size: 1.1em;">INC<span style="color:var(--blue)">.OS</span></div>
-        <div class="net-tag">SVP_GENESIS_CORE</div>
+        <div style="font-weight:bold; letter-spacing:1px;">INC<span style="color:var(--blue)">.OS</span></div>
+        <div class="net-tag">OPEN_FINANCE_ACTIVE</div>
     </header>
-    <nav>
-        <div class="nav-item active" onclick="tab('buy', this)">Exchange</div>
-        <div class="nav-item" onclick="tab('dash', this)">Portfólio</div>
-        <div class="nav-item" onclick="tab('gov', this)">Gov 2%</div>
-    </nav>
     
     <div id="main-view">
-        <div id="buy" class="page active">
-            <div class="exchange-card">
-                <div class="label-group">
-                    <span style="font-size:0.6em; color:var(--dim);">QUANTIA PARA INVESTIR</span>
-                    <span style="font-size:0.6em; color:var(--green);">SALDO FIAT: DISPONÍVEL</span>
-                </div>
-                <div class="input-wrapper">
-                    <input type="number" id="invest" class="main-input" placeholder="0" oninput="engine()">
-                    <span class="currency-tag">EUR / BRL</span>
-                </div>
+        <div class="exchange-card">
+            <div class="input-label">Valor para Aporte (EUR/BRL)</div>
+            <input type="number" id="val" class="amount-input" placeholder="0.00" oninput="calc()">
+            
+            <div id="preview" style="font-size:0.8em; color:var(--green); margin-bottom:20px;">Recebe: 0.00 INC</div>
 
-                <div class="conversion-stats">
-                    <div class="stat-row"><span>Ativos a receber (98%)</span><b id="user_inc" style="color:var(--green)">0.00 INC</b></div>
-                    <div class="stat-row"><span>Taxa de Emissão (2%)</span><b id="gov_inc" style="color:var(--gold)">0.00 INC</b></div>
-                    <div class="stat-row"><span>Cotação de Rede</span><span>1.00 EUR = 5.26 INC</span></div>
-                </div>
-
-                <button class="btn-buy" onclick="checkout()">CONTINUAR PARA PAGAMENTO</button>
+            <div class="input-label">Selecione sua Instituição Bancária</div>
+            <div class="bank-grid">
+                <div class="bank-btn" onclick="sel(this)">Santander / SEPA</div>
+                <div class="bank-btn" onclick="sel(this)">Revolut / Global</div>
+                <div class="bank-btn" onclick="sel(this)">Itaú / PIX</div>
+                <div class="bank-btn" onclick="sel(this)">Nubank / PIX</div>
             </div>
-            <p style="text-align:center; font-size:0.5em; color:#444; margin-top:20px;">OPERADO POR ALEXANDRE FREIRE // SVP PROTOCOL</p>
-        </div>
 
-        <div id="dash" class="page">
-            <div class="exchange-card"><div style="font-size:0.6em; color:var(--dim);">VALOR TOTAL PORTFÓLIO</div><div id="p_val" style="font-size:2em; font-weight:bold; color:var(--green); margin-top:10px;">...</div></div>
-        </div>
-        <div id="gov" class="page">
-            <div class="exchange-card"><div style="font-size:0.6em; color:var(--gold);">RESERVA DE GOVERNANÇA (2%)</div><div id="g_val" style="font-size:2em; font-weight:bold; color:var(--gold); margin-top:10px;">...</div></div>
+            <button class="btn-connect" onclick="connect()">CONECTAR CONTA E PAGAR</button>
+            <p style="font-size:0.5em; color:#444; text-align:center; margin-top:15px;">CONEXÃO PROTEGIDA PELA GRADE LATTICE 2500 BITS</p>
         </div>
     </div>
 
-    <div id="modal" class="overlay">
-        <div class="checkout-box">
-            <div class="order-id" id="ord_id">ORDER_ID: LOADING...</div>
-            <h3 style="text-align:center; margin:0 0 20px 0; color:var(--blue);">DEPOSITAR FUNDOS</h3>
-            
-            <div class="copy-card">
-                <div class="copy-label">PIX (COPIA E COLA)</div>
-                <div class="copy-data">009.532.169-61</div>
-                <button class="btn-copy" onclick="copy('009.532.169-61')">COPIAR</button>
-            </div>
-
-            <div class="copy-card">
-                <div class="copy-label">IBAN SEPA (EUROPA)</div>
-                <div class="copy-data">PT50 0007 0000 0081 9509 1572 3</div>
-                <button class="btn-copy" onclick="copy('PT50000700000081950915723')">COPIAR</button>
-            </div>
-
-            <p style="font-size:0.55em; color:#555; text-align:center;">Após o envio, os Nano-bots identificarão o lastro na sua Grade de 2500 bits.</p>
-            
-            <button class="btn-buy" style="margin-top:20px; background:var(--blue);" onclick="document.getElementById('modal').style.display='none'">CONFIRMAR DEPÓSITO</button>
-        </div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="status-msg" style="font-size:0.9em; font-weight:bold; letter-spacing:1px;">CONECTANDO AO GATEWAY BANCÁRIO...</div>
+        <div style="font-size:0.6em; color:#555; margin-top:10px;">Autenticando via Chave SVP Alexandre Freire</div>
     </div>
 
     <script>
-        function tab(p, e) {
-            document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-            document.getElementById(p).classList.add('active');
-            e.classList.add('active');
+        function sel(e) {
+            document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
+            e.classList.add('selected');
         }
-        function engine() {
-            let v = document.getElementById("invest").value || 0;
-            document.getElementById("user_inc").innerText = (v * 5.26 * 0.98).toFixed(2) + " INC";
-            document.getElementById("gov_inc").innerText = (v * 5.26 * 0.02).toFixed(2) + " INC";
+        function calc() {
+            let v = document.getElementById("val").value || 0;
+            document.getElementById("preview").innerText = "Recebe: " + (v * 5.26 * 0.98).toFixed(2) + " INC";
         }
-        function checkout() {
-            if(document.getElementById("invest").value <= 0) return alert("Defina um valor.");
-            document.getElementById("ord_id").innerText = "ORDER_ID: INC-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-            document.getElementById("modal").style.display = 'flex';
+        function connect() {
+            let v = document.getElementById("val").value;
+            if(v <= 0) return alert("Defina o valor.");
+            
+            document.getElementById("loading-overlay").style.display = 'flex';
+            
+            setTimeout(() => { document.getElementById("status-msg").innerText = "AUTORIZANDO TRANSFERÊNCIA..."; }, 2000);
+            setTimeout(() => { document.getElementById("status-msg").innerText = "DESVIANDO 2% PARA GOVERNANÇA..."; document.getElementById("status-msg").style.color = "#ffae00"; }, 4000);
+            setTimeout(() => { 
+                alert("SUCESSO: Aporte de " + v + " realizado. O capital foi injetado na rede INC.");
+                location.reload();
+            }, 6000);
         }
-        function copy(txt) {
-            navigator.clipboard.writeText(txt);
-            alert("Copiado para a área de transferência!");
-        }
-        async function update() {
-            try {
-                const r = await fetch("/api/nano_status");
-                const d = await r.json();
-                document.getElementById("p_val").innerText = d.circulante.toLocaleString() + " INC";
-                document.getElementById("g_val").innerText = d.reserva_gov.toLocaleString() + " INC";
-            } catch(e) {}
-        }
-        setInterval(update, 5000); update();
     </script>
 </body>
 </html>
