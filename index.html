@@ -3,150 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | NEXUS_VAULT_v14</title>
+    <title>INC.OS | WHITEPAPER & CORE</title>
     <style>
-        :root { --bg: #020202; --card: #0a0a0a; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #ffffff; --dim: #555; }
-        * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        :root { --bg: #030303; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; --dim: #666; }
+        * { box-sizing: border-box; font-family: "SF Pro Display", "Inter", sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        .screen { display: none; height: 100%; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .active { display: flex; animation: fadeIn 0.4s ease; }
+        nav { background: #000; display: flex; border-bottom: 1px solid #222; z-index: 100; }
+        .nav-item { flex: 1; padding: 18px; text-align: center; font-size: 0.65em; color: var(--dim); cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-item.active { color: var(--blue); border-bottom: 2px solid var(--blue); background: rgba(0,170,255,0.05); }
+
+        #viewport { flex: 1; overflow-y: auto; padding: 25px; }
+        .screen { display: none; animation: fadeIn 0.4s ease; }
+        .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card { background: var(--card); border: 1px solid #151515; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
-        .btn-main { background: var(--green); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; }
-        
-        .asset-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #111; }
-        .asset-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.7em; margin-right: 12px; }
-        
-        .tab-nav { display: flex; background: #000; border-top: 1px solid #222; position: fixed; bottom: 0; width: 100%; }
-        .tab-item { flex: 1; padding: 15px; text-align: center; font-size: 0.6em; color: var(--dim); text-transform: uppercase; cursor: pointer; }
-        .tab-item.active { color: var(--blue); }
+        /* ESTILO WHITEPAPER */
+        .wp-container { max-width: 800px; margin: 0 auto; line-height: 1.6; }
+        .wp-title { color: var(--blue); font-size: 1.8em; font-weight: 900; margin-bottom: 5px; }
+        .wp-subtitle { color: var(--dim); font-size: 0.7em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
+        .wp-section { margin-bottom: 30px; border-left: 2px solid #222; padding-left: 20px; }
+        .wp-h2 { color: var(--gold); font-size: 1em; text-transform: uppercase; margin-bottom: 15px; }
+        .wp-p { font-size: 0.9em; color: #aaa; margin-bottom: 15px; text-align: justify; }
+        .formula { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #1a1a1a; color: var(--green); font-family: monospace; font-size: 0.8em; overflow-x: auto; margin: 15px 0; }
 
-        /* QR CODE FIX */
-        .qr-display { width: 200px; height: 200px; background: #fff; margin: 0 auto 15px; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 4px solid var(--blue); }
-        .qr-display img { width: 90%; height: 90%; }
+        /* DASHBOARD */
+        .card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 20px; padding: 25px; margin-bottom: 20px; }
+        .btn-action { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="scr-login" class="screen" style="justify-content:center; text-align:center;">
-        <h1 style="letter-spacing:2px;">INC<span style="color:var(--blue)">.OS</span></h1>
-        <div class="card">
-            <div class="qr-display" onclick="createAccount()"><img id="qr-login-img" src=""></div>
-            <button class="btn-main" style="background:var(--blue);" onclick="createAccount()">Ativar Cofre Multiativos</button>
-        </div>
-    </div>
-
-    <div id="scr-dash" class="screen">
-        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <div style="font-weight:900;">COFRE INC</div>
-            <div id="addr-tag" style="font-size:0.55em; color:var(--blue); background:#111; padding:5px 10px; border-radius:4px; font-family:monospace;">---</div>
-        </header>
-
-        <div class="card">
-            <div style="font-size:0.6em; color:var(--dim); margin-bottom:10px;">BALANÇO ESTIMADO</div>
-            <div id="total-fiat" style="font-size:2.2em; font-weight:900; color:var(--green);">$ 0.00</div>
-        </div>
-
-        <div class="card">
-            <div class="asset-row">
-                <div style="display:flex; align-items:center;"><div class="asset-icon" style="background:var(--blue); color:#000;">INC</div>INC Coin</div>
-                <div id="bal-inc" style="font-weight:bold;">0.00</div>
-            </div>
-            <div class="asset-row">
-                <div style="display:flex; align-items:center;"><div class="asset-icon" style="background:#f7931a; color:#fff;">BTC</div>Bitcoin</div>
-                <div id="bal-btc" style="font-weight:bold;">0.0000</div>
-            </div>
-            <div class="asset-row">
-                <div style="display:flex; align-items:center;"><div class="asset-icon" style="background:#627eea; color:#fff;">ETH</div>Ethereum</div>
-                <div id="bal-eth" style="font-weight:bold;">0.000</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="scr-receive" class="screen">
-        <h2 style="font-size:1.2em; margin-bottom:20px;">Receber Ativos</h2>
-        <div class="card">
-            <select id="asset-select" onchange="updateReceiveQR()" style="width:100%; background:#111; color:#fff; border:1px solid #333; padding:15px; border-radius:12px; margin-bottom:20px;">
-                <option value="INC">INC (Rede Nativa)</option>
-                <option value="BTC">Bitcoin (BTC)</option>
-                <option value="ETH">Ethereum (ETH)</option>
-                <option value="USDT">USDT (Stablecoin)</option>
-            </select>
-            
-            <div class="qr-display" id="qr-target">
-                <img id="qr-receive-img" src="">
-            </div>
-            
-            <div id="receive-addr" style="font-size:0.6em; color:var(--blue); text-align:center; word-break:break-all; font-family:monospace; margin-bottom:20px;">---</div>
-            
-            <button class="btn-main" onclick="simularDeposito()">Simular Recebimento</button>
-        </div>
-    </div>
-
-    <nav class="tab-nav" id="nav-bar" style="display:none;">
-        <div class="tab-item active" onclick="showTab('scr-dash', this)">Carteira</div>
-        <div class="tab-item" onclick="showTab('scr-receive', this)">Receber</div>
-        <div class="tab-item" onclick="logout()">Sair</div>
+    <nav>
+        <div class="nav-item active" onclick="tab('wp', this)">Whitepaper</div>
+        <div class="nav-item" onclick="tab('core', this)">Terminal</div>
+        <div class="nav-item" onclick="tab('id', this)">Identidade</div>
     </nav>
 
+    <div id="viewport">
+        
+        <div id="wp" class="screen active">
+            <div class="wp-container">
+                <div class="wp-title">INC.OS</div>
+                <div class="wp-subtitle">O Manifesto da Verdadeira Democracia Financeira</div>
+                
+                <div class="wp-section">
+                    <div class="wp-h2">1. Origem e Propósito</div>
+                    <div class="wp-p">A Rede INC, sob a arquitetura de <b>Alexandre Freire</b>, estabelece uma nova ordem econômica. O objetivo é a remoção de intermediários estatais e a criação de uma reserva de valor protegida por criptografia de grade (Lattice-based cryptography).</div>
+                </div>
+
+                <div class="wp-section">
+                    <div class="wp-h2">2. A Escassez Absoluta</div>
+                    <div class="wp-p">Diferente de moedas inflacionárias, o suprimento de INC é limitado a:</div>
+                    <div class="formula">MAX_SUPPLY = 10.000.000,0000 INC</div>
+                    <div class="wp-p">Nenhuma unidade adicional pode ser criada após o Bloco Gênese. A escassez é garantida pelo núcleo imutável do servidor.</div>
+                </div>
+
+                <div class="wp-section">
+                    <div class="wp-h2">3. Governança e Taxa de 2%</div>
+                    <div class="wp-p">Para garantir o desenvolvimento da Grade Lattice e a soberania do Arquiteto, toda injeção de liquidez externa sofre uma dedução fixa:</div>
+                    <div class="formula">T(x) = x * 0,02 | R(x) = x * 0,98</div>
+                    <div class="wp-p">Onde <b>T</b> é a taxa de governança destinada ao Cofre do Arquiteto e <b>R</b> é o crédito recebido pelo usuário. Esse mecanismo financia a proteção contra ataques quânticos e mantém a rede independente.</div>
+                </div>
+
+                <div class="wp-section">
+                    <div class="wp-h2">4. Segurança de 2.500 Bits</div>
+                    <div class="wp-p">Cada conta é vinculada a uma chave atômica gerada com entropia de 2.500 bits, tornando-a resistente a descriptografia por computação convencional e quântica.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="core" class="screen">
+            <div class="card">
+                <div style="font-size:0.6em; color:var(--dim);">STATUS DA REDE</div>
+                <div style="color:var(--green); font-size:1.2em; font-weight:bold; margin-top:10px;">SVP_ACTIVE_PROTECTION</div>
+                <p style="font-size:0.7em; color:#555;">Conectado à Grade Global: 2.500 Nodes detectados.</p>
+            </div>
+            <button class="btn-action" onclick="alert('Iniciando Broadcast...')">SINCRONIZAR REDE</button>
+        </div>
+
+        <div id="id" class="screen">
+            <div class="card" style="text-align:center;">
+                <div style="font-size:0.7em; color:var(--blue); margin-bottom:15px;">QR CODE DE ACESSO SOBERANO</div>
+                <img id="qr-core" src="" style="width:200px; border-radius:10px; border:2px solid var(--blue); padding:10px; background:#fff;">
+                <div style="font-family:monospace; font-size:0.6em; color:var(--dim); margin-top:15px;" id="addr-txt">VINCULANDO...</div>
+            </div>
+        </div>
+
+    </div>
+
     <script>
-        let userData = JSON.parse(localStorage.getItem('inc_nexus_v14')) || null;
-
-        function showTab(id, el) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(el) el.classList.add('active');
-            if(id === 'scr-receive') updateReceiveQR();
+        function tab(s, el) {
+            document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+            document.getElementById(s).classList.add('active');
+            el.classList.add('active');
         }
 
-        function init() {
-            if (userData) {
-                document.getElementById('nav-bar').style.display = 'flex';
-                document.getElementById('addr-tag').innerText = userData.address;
-                document.getElementById('bal-inc').innerText = userData.assets.inc.toFixed(2);
-                document.getElementById('bal-btc').innerText = userData.assets.btc.toFixed(4);
-                document.getElementById('bal-eth').innerText = userData.assets.eth.toFixed(3);
-                showTab('scr-dash');
-            } else {
-                document.getElementById('qr-login-img').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=GENESIS_" + Math.random();
-                showTab('scr-login');
-            }
-        }
-
-        function createAccount() {
-            userData = {
-                address: "INC_8x" + Math.random().toString(36).substr(2, 9).toUpperCase(),
-                assets: { inc: 0, btc: 0, eth: 0 }
-            };
-            localStorage.setItem('inc_nexus_v14', JSON.stringify(userData));
-            init();
-        }
-
-        function updateReceiveQR() {
-            const asset = document.getElementById('asset-select').value;
-            const addr = userData.address;
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${asset}:${addr}`;
-            document.getElementById('qr-receive-img').src = qrUrl;
-            document.getElementById('receive-addr').innerText = addr;
-        }
-
-        function simularDeposito() {
-            const asset = document.getElementById('asset-select').value.toLowerCase();
-            const amt = prompt("Quanto de " + asset.toUpperCase() + " você está enviando?");
-            if(!amt || isNaN(amt)) return;
-            
-            userData.assets[asset] += (amt * 0.98); // 2% taxa arquiteto
-            localStorage.setItem('inc_nexus_v14', JSON.stringify(userData));
-            alert("Liquidez detectada! Ativos protegidos pela Grade Lattice.");
-            init();
-        }
-
-        function logout() { if(confirm("Deseja fechar o acesso ao cofre?")) { localStorage.clear(); location.reload(); } }
-
-        init();
+        window.onload = () => {
+            const addr = "INC_8x" + Math.random().toString(16).slice(2, 14).toUpperCase();
+            document.getElementById('addr-txt').innerText = addr;
+            document.getElementById('qr-core').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + addr;
+        };
     </script>
 </body>
 </html>
