@@ -3,150 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.NEXUS | UNSTOPPABLE</title>
+    <title>INC.ULTIMATE | THE ARCHITECT EDITION</title>
     <style>
-        :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #fcd535; --text: #eaecef; --dim: #848e9c; }
-        * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
+        :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #fcd535; --red: #ff3e3e; --text: #eaecef; --dim: #848e9c; }
+        * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .telemetry { background: #000; padding: 10px 15px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; font-family: monospace; font-size: 0.55em; color: var(--dim); }
-        .telemetry b { color: var(--green); }
+        /* TELEMETRIA BINANCE-STYLE */
+        .market-ticker { background: #000; padding: 5px 15px; border-bottom: 1px solid #1a1a1a; display: flex; gap: 20px; font-family: monospace; font-size: 0.55em; overflow-x: auto; white-space: nowrap; }
+        .ticker-item b { color: var(--green); }
 
-        header { background: #0a0a0a; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+        header { background: #0a0a0a; padding: 15px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         
-        #viewport { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
+        #viewport { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
         .page { display: none; } .active-page { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 22px; margin-bottom: 15px; }
-        .label { font-size: 0.6em; color: var(--dim); text-transform: uppercase; margin-bottom: 8px; }
-        .val-main { font-size: 2.2em; font-weight: 900; letter-spacing: -1px; color: var(--green); }
+        /* CARDS PROFISSIONAIS */
+        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 12px; padding: 18px; margin-bottom: 12px; }
+        .label { font-size: 0.55em; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        .val-main { font-size: 2.1em; font-weight: 900; color: var(--text); margin: 5px 0; }
         
-        input { width: 100%; background: #000; border: 1px solid #222; padding: 18px; border-radius: 12px; color: #fff; font-size: 1.1em; margin-bottom: 15px; }
-        .btn-blue { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; }
+        /* BOTÕES OMNI-CHANNEL */
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-action { background: #1a1a1a; border: 1px solid #333; padding: 12px; border-radius: 8px; color: #fff; font-size: 0.6em; font-weight: bold; cursor: pointer; text-align: center; }
+        .btn-action:active { background: var(--blue); color: #000; }
 
-        /* NOTIFICAÇÃO INTERNA (SUBSTITUI O ALERT) */
-        #toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--blue); color: #000; padding: 15px 30px; border-radius: 30px; font-weight: bold; font-size: 0.8em; z-index: 9999; transition: 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
+        /* LIVRO DE ORDENS (KRAKEN) */
+        .order-book { font-family: monospace; font-size: 0.65em; }
+        .order-row { display: flex; justify-content: space-between; padding: 3px 0; }
+        .bid { color: var(--green); } .ask { color: var(--red); }
+
+        /* NOTIFICAÇÃO TOAST */
+        #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--blue); color: #000; padding: 10px 20px; border-radius: 20px; font-size: 0.7em; font-weight: bold; display: none; z-index: 1000; }
+
         nav { background: #000; border-top: 1px solid #222; display: flex; position: fixed; bottom: 0; width: 100%; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.6em; color: var(--dim); cursor: pointer; text-transform: uppercase; }
+        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.55em; color: var(--dim); cursor: pointer; text-transform: uppercase; }
         .nav-item.active { color: var(--blue); border-top: 2px solid var(--blue); }
-
-        .qr-frame { width: 180px; height: 180px; background: #fff; margin: 0 auto 15px; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 3px solid var(--blue); }
-        .qr-frame img { width: 90%; }
     </style>
 </head>
 <body>
 
-    <div id="toast">MENSAGEM DO SISTEMA</div>
-
-    <div class="telemetry">
-        <span>LATENCY: <b id="lat">12 ms</b></span>
-        <span>TPS: <b id="tps">412.5</b></span>
-        <span>NETWORK: <b>SVP_LATTICE</b></span>
+    <div class="market-ticker">
+        <span class="ticker-item">INC/USD: <b>5.2632</b></span>
+        <span class="ticker-item">BTC/USD: <b>64,210.12</b></span>
+        <span class="ticker-item">SVP_SHIELD: <b>ACTIVE</b></span>
+        <span class="ticker-item">LATTICE: <b>2500_BITS</b></span>
     </div>
 
     <header>
-        <div style="font-weight:900; color:var(--blue);">INC<span style="color:#fff">.NEXUS</span></div>
-        <div style="font-size:0.55em; color:var(--green); font-weight:bold;">● ENGINE_V37_ACTIVE</div>
+        <div style="font-weight:900; color:var(--blue); font-size:1.2em;">INC<span style="color:#fff">.ULTIMATE</span></div>
+        <div id="status-net" style="font-size:0.5em; color:var(--green); border:1px solid var(--green); padding:2px 6px; border-radius:4px;">CMC_LISTED</div>
     </header>
 
     <div id="viewport">
-        <div id="pg-dash" class="page active-page">
+        <div id="trade" class="page active-page">
             <div class="card">
-                <div class="label">Patrimônio em Proteção (USD)</div>
-                <div class="val-main" id="display-usd">$ 0.00</div>
-                <div id="display-uid" style="font-size:0.55em; color:var(--blue); margin-top:10px; font-family: monospace;">UID: ---</div>
+                <div class="label">Patrimônio Líquido</div>
+                <div class="val-main" id="bal-total">$ 52,632.00</div>
+                <div style="display:flex; justify-content:space-between; font-size:0.6em; color:var(--green);">
+                    <span>+2.41% (24h)</span><span id="bal-uid">ID: ---</span>
+                </div>
             </div>
 
-            <div class="label">Status da Carteira</div>
-            <div class="card">
-                <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #111;">
-                    <span>Ativos INC</span><b id="display-inc">0.00</b>
-                </div>
-                <div style="display:flex; justify-content:space-between; padding:12px 0; color:var(--gold);">
-                    <span>Governança (2%)</span><b id="display-gov">$ 0.00</b>
-                </div>
+            <div class="action-grid">
+                <div class="btn-action" onclick="tab('pay')">DEPOSITAR</div>
+                <div class="btn-action" onclick="tab('receive')">RECEBER</div>
+                <div class="btn-action" onclick="tab('wp')">MANIFESTO</div>
             </div>
-            <button class="btn-blue" onclick="tab('pg-receive', document.querySelectorAll('.nav-item')[1])">Depositar Liquidez</button>
+
+            <div class="card">
+                <div class="label">Order Book (Real-Time)</div>
+                <div class="order-book" id="ob">
+                    </div>
+            </div>
         </div>
 
-        <div id="pg-receive" class="page">
-            <div class="card" style="text-align:center;">
-                <div class="label">ID da Grade Lattice</div>
-                <div class="qr-frame"><img id="qr-img" src="" alt="QR"></div>
-                <div class="label" style="margin-top:10px;">Valor do Depósito ($)</div>
-                <input type="number" id="deposit-amt" placeholder="0.00" inputmode="decimal">
-                <button class="btn-blue" style="background:var(--green);" onclick="processDeposit()">Processar Entrada</button>
+        <div id="pay" class="page">
+            <div class="card">
+                <h2 style="font-size:1em; margin-top:0;">Liquidez Imediata</h2>
+                <div class="label">Valor em USD</div>
+                <input type="number" id="amt" style="width:100%; background:#000; border:1px solid #333; padding:15px; border-radius:8px; color:#fff; margin:10px 0;" placeholder="0.00">
+                <div class="label">Pagar com:</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+                    <button class="btn-action" onclick="process(0.98)">APPLE PAY</button>
+                    <button class="btn-action" onclick="process(0.98)">PAYPAL</button>
+                    <button class="btn-action" onclick="process(0.98)">PIX / CRYPTO</button>
+                    <button class="btn-action" onclick="process(0.98)">VISA / MC</button>
+                </div>
             </div>
-            <button class="btn-blue" style="background:transparent; color:var(--dim); border:1px solid #222; margin-top:10px;" onclick="tab('pg-dash', document.querySelectorAll('.nav-item')[0])">Voltar</button>
+        </div>
+
+        <div id="receive" class="page">
+            <div class="card" style="text-align:center;">
+                <div class="label">Sua Chave de Grade</div>
+                <div id="qr-box" style="background:#fff; width:150px; height:150px; margin:15px auto; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+                    <img id="qr-img" src="" style="width:90%;">
+                </div>
+                <div class="label" id="qr-addr" style="font-family:monospace; color:var(--blue);">---</div>
+            </div>
+            <div class="card">
+                <div class="label">Auditoria de Lastro (10M INC)</div>
+                <div style="font-size:0.7em; display:flex; justify-content:space-between; margin-top:10px;">
+                    <span>Genesis Vault:</span><b>6,000,000</b>
+                </div>
+                <div style="font-size:0.7em; display:flex; justify-content:space-between; color:var(--gold);">
+                    <span>Governança:</span><b id="bal-gov">$ 1,052.00</b>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div id="toast">OPERACAO CONCLUIDA</div>
+
     <nav>
-        <div class="nav-item active" onclick="tab('pg-dash', this)">Trade</div>
-        <div class="nav-item" onclick="tab('pg-receive', this)">Receber</div>
-        <div class="nav-item" onclick="resetSystem()">Reset</div>
+        <div class="nav-item active" onclick="tab('trade', this)">Exchange</div>
+        <div class="nav-item" onclick="tab('pay', this)">Aporte</div>
+        <div class="nav-item" onclick="tab('receive', this)">Cofre</div>
+        <div class="nav-item" onclick="location.reload()">Reset</div>
     </nav>
 
     <script>
-        let store = JSON.parse(localStorage.getItem('inc_data')) || {
-            usd: 52632.00,
-            inc: 10000.00,
-            gov: 1052.64,
-            uid: "INC_6ZP0XG1CB"
-        };
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.top = '30px';
-            setTimeout(() => { t.style.top = '-100px'; }, 3000);
-        }
-
-        function refreshUI() {
-            document.getElementById('display-usd').innerText = "$ " + store.usd.toLocaleString('en-US', {minimumFractionDigits: 2});
-            document.getElementById('display-inc').innerText = store.inc.toFixed(2);
-            document.getElementById('display-gov').innerText = "$ " + store.gov.toFixed(2);
-            document.getElementById('display-uid').innerText = "UID: " + store.uid;
-            document.getElementById('qr-img').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + store.uid;
-            localStorage.setItem('inc_data', JSON.stringify(store));
-        }
+        let db = JSON.parse(localStorage.getItem('inc_v38')) || { usd: 52632.00, gov: 1052.00, id: "INC_"+Math.random().toString(36).substr(2,6).toUpperCase() };
 
         function tab(id, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active-page');
-            if(el) el.classList.add('active');
-        }
-
-        function processDeposit() {
-            const val = parseFloat(document.getElementById('deposit-amt').value);
-            if(!val || val <= 0) {
-                showToast("ERRO: Valor Inválido");
-                return;
+            if(el) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                el.classList.add('active');
             }
-            
-            store.usd += (val * 0.98);
-            store.inc += (val * 0.98) / 5.26;
-            store.gov += (val * 0.02);
-            
-            showToast("SUCESSO: Capital Protegido!");
-            document.getElementById('deposit-amt').value = '';
-            refreshUI();
-            setTimeout(() => { tab('pg-dash', document.querySelectorAll('.nav-item')[0]); }, 1000);
         }
 
-        function resetSystem() {
-            localStorage.clear();
-            location.reload();
+        function process(fee) {
+            let a = parseFloat(document.getElementById('amt').value);
+            if(!a) return;
+            db.usd += (a * fee);
+            db.gov += (a * (1-fee));
+            save();
+            document.getElementById('toast').style.display = 'block';
+            setTimeout(() => { document.getElementById('toast').style.display = 'none'; tab('trade'); }, 1500);
         }
 
-        window.onload = refreshUI;
-        setInterval(() => {
-            document.getElementById('lat').innerText = (8 + Math.random()*4).toFixed(0) + " ms";
-            document.getElementById('tps').innerText = (412 + Math.random()*10).toFixed(1);
-        }, 2000);
+        function save() {
+            localStorage.setItem('inc_v38', JSON.stringify(db));
+            document.getElementById('bal-total').innerText = "$ " + db.usd.toLocaleString();
+            document.getElementById('bal-gov').innerText = "$ " + db.gov.toLocaleString();
+            document.getElementById('bal-uid').innerText = "ID: " + db.id;
+            document.getElementById('qr-addr').innerText = db.id;
+            document.getElementById('qr-img').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data="+db.id;
+        }
+
+        function genOB() {
+            let html = '';
+            for(let i=0; i<5; i++) {
+                html += `<div class="order-row ask"><span>${(5.27 + Math.random()*0.1).toFixed(4)}</span><span>${(Math.random()*1000).toFixed(2)}</span></div>`;
+            }
+            html += `<div style="text-align:center; padding:5px; font-weight:bold; color:var(--blue); border-top:1px solid #222; border-bottom:1px solid #222; margin:5px 0;">5.2632 USD</div>`;
+            for(let i=0; i<5; i++) {
+                html += `<div class="order-row bid"><span>${(5.25 - Math.random()*0.1).toFixed(4)}</span><span>${(Math.random()*1000).toFixed(2)}</span></div>`;
+            }
+            document.getElementById('ob').innerHTML = html;
+        }
+
+        window.onload = () => { save(); genOB(); setInterval(genOB, 3000); };
     </script>
 </body>
 </html>
