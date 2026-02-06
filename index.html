@@ -3,108 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | WHITEPAPER & CORE</title>
+    <title>INC.NEXUS | EXCHANGE</title>
     <style>
-        :root { --bg: #030303; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; --dim: #666; }
+        :root { --bg: #0b0e11; --card: #1e2329; --yellow: #fcd535; --green: #02c076; --red: #cf304a; --blue: #00aaff; --text: #eaecef; --dim: #848e9c; }
         * { box-sizing: border-box; font-family: "SF Pro Display", "Inter", sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        nav { background: #000; display: flex; border-bottom: 1px solid #222; z-index: 100; }
-        .nav-item { flex: 1; padding: 18px; text-align: center; font-size: 0.65em; color: var(--dim); cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        .nav-item.active { color: var(--blue); border-bottom: 2px solid var(--blue); background: rgba(0,170,255,0.05); }
+        /* HEADER ESTILO BINANCE */
+        header { background: var(--bg); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2b3139; }
+        .user-id { font-size: 0.7em; color: var(--dim); background: #2b3139; padding: 4px 8px; border-radius: 4px; }
 
-        #viewport { flex: 1; overflow-y: auto; padding: 25px; }
-        .screen { display: none; animation: fadeIn 0.4s ease; }
-        .active { display: block; }
+        /* NAVEGAÇÃO SUPERIOR */
+        nav { display: flex; background: var(--bg); border-bottom: 1px solid #2b3139; overflow-x: auto; }
+        .nav-link { padding: 14px 20px; font-size: 0.75em; font-weight: 600; color: var(--dim); cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .nav-link.active { color: var(--yellow); border-bottom: 2px solid var(--yellow); }
+
+        #main { flex: 1; overflow-y: auto; padding: 16px; }
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* ESTILO WHITEPAPER */
-        .wp-container { max-width: 800px; margin: 0 auto; line-height: 1.6; }
-        .wp-title { color: var(--blue); font-size: 1.8em; font-weight: 900; margin-bottom: 5px; }
-        .wp-subtitle { color: var(--dim); font-size: 0.7em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
-        .wp-section { margin-bottom: 30px; border-left: 2px solid #222; padding-left: 20px; }
-        .wp-h2 { color: var(--gold); font-size: 1em; text-transform: uppercase; margin-bottom: 15px; }
-        .wp-p { font-size: 0.9em; color: #aaa; margin-bottom: 15px; text-align: justify; }
-        .formula { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #1a1a1a; color: var(--green); font-family: monospace; font-size: 0.8em; overflow-x: auto; margin: 15px 0; }
-
-        /* DASHBOARD */
-        .card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 20px; padding: 25px; margin-bottom: 20px; }
-        .btn-action { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; }
+        /* CARDS E LISTAS */
+        .card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+        .label { font-size: 0.7em; color: var(--dim); margin-bottom: 8px; }
+        .big-val { font-size: 1.8em; font-weight: bold; margin-bottom: 4px; }
+        
+        .market-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #2b3139; }
+        .symbol { font-weight: bold; font-size: 0.9em; }
+        .change-pos { color: var(--green); font-size: 0.8em; }
+        
+        /* TRADE BUTTONS */
+        .btn-buy { background: var(--green); color: #fff; border: none; padding: 12px; border-radius: 4px; font-weight: bold; flex: 1; cursor: pointer; }
+        .btn-sell { background: var(--red); color: #fff; border: none; padding: 12px; border-radius: 4px; font-weight: bold; flex: 1; cursor: pointer; }
+        
+        /* FOOTER TAB BAR */
+        .tab-bar { background: #181a20; display: flex; border-top: 1px solid #2b3139; padding-bottom: 10px; }
+        .tab-item { flex: 1; padding: 12px; text-align: center; font-size: 0.6em; color: var(--dim); cursor: pointer; }
+        .tab-item.active { color: var(--yellow); }
     </style>
 </head>
 <body>
 
+    <header>
+        <div style="font-weight: 900; color: var(--yellow); font-size: 1.2em;">INC</div>
+        <div class="user-id" id="uid">UID: ---</div>
+    </header>
+
     <nav>
-        <div class="nav-item active" onclick="tab('wp', this)">Whitepaper</div>
-        <div class="nav-item" onclick="tab('core', this)">Terminal</div>
-        <div class="nav-item" onclick="tab('id', this)">Identidade</div>
+        <div class="nav-link active" onclick="tab('market', this)">Mercados</div>
+        <div class="nav-link" onclick="tab('trade', this)">Trade</div>
+        <div class="nav-link" onclick="tab('wallet', this)">Carteira</div>
+        <div class="nav-link" onclick="tab('gov', this)">Governança</div>
     </nav>
 
-    <div id="viewport">
+    <div id="main">
         
-        <div id="wp" class="screen active">
-            <div class="wp-container">
-                <div class="wp-title">INC.OS</div>
-                <div class="wp-subtitle">O Manifesto da Verdadeira Democracia Financeira</div>
-                
-                <div class="wp-section">
-                    <div class="wp-h2">1. Origem e Propósito</div>
-                    <div class="wp-p">A Rede INC, sob a arquitetura de <b>Alexandre Freire</b>, estabelece uma nova ordem econômica. O objetivo é a remoção de intermediários estatais e a criação de uma reserva de valor protegida por criptografia de grade (Lattice-based cryptography).</div>
-                </div>
-
-                <div class="wp-section">
-                    <div class="wp-h2">2. A Escassez Absoluta</div>
-                    <div class="wp-p">Diferente de moedas inflacionárias, o suprimento de INC é limitado a:</div>
-                    <div class="formula">MAX_SUPPLY = 10.000.000,0000 INC</div>
-                    <div class="wp-p">Nenhuma unidade adicional pode ser criada após o Bloco Gênese. A escassez é garantida pelo núcleo imutável do servidor.</div>
-                </div>
-
-                <div class="wp-section">
-                    <div class="wp-h2">3. Governança e Taxa de 2%</div>
-                    <div class="wp-p">Para garantir o desenvolvimento da Grade Lattice e a soberania do Arquiteto, toda injeção de liquidez externa sofre uma dedução fixa:</div>
-                    <div class="formula">T(x) = x * 0,02 | R(x) = x * 0,98</div>
-                    <div class="wp-p">Onde <b>T</b> é a taxa de governança destinada ao Cofre do Arquiteto e <b>R</b> é o crédito recebido pelo usuário. Esse mecanismo financia a proteção contra ataques quânticos e mantém a rede independente.</div>
-                </div>
-
-                <div class="wp-section">
-                    <div class="wp-h2">4. Segurança de 2.500 Bits</div>
-                    <div class="wp-p">Cada conta é vinculada a uma chave atômica gerada com entropia de 2.500 bits, tornando-a resistente a descriptografia por computação convencional e quântica.</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="core" class="screen">
+        <div id="market" class="page active-page">
             <div class="card">
-                <div style="font-size:0.6em; color:var(--dim);">STATUS DA REDE</div>
-                <div style="color:var(--green); font-size:1.2em; font-weight:bold; margin-top:10px;">SVP_ACTIVE_PROTECTION</div>
-                <p style="font-size:0.7em; color:#555;">Conectado à Grade Global: 2.500 Nodes detectados.</p>
+                <div class="label">Destaque INC/USDT</div>
+                <div class="big-val" style="color:var(--green)">$ 5.2632</div>
+                <div class="change-pos">+8.42% (24h)</div>
             </div>
-            <button class="btn-action" onclick="alert('Iniciando Broadcast...')">SINCRONIZAR REDE</button>
+            <div class="label">Principais Moedas</div>
+            <div id="market-list">
+                <div class="market-item"><span>BTC/INC</span><span style="text-align:right;"><b>12.441,12</b><br><span class="change-pos">+1.2%</span></span></div>
+                <div class="market-item"><span>ETH/INC</span><span style="text-align:right;"><b>642,88</b><br><span class="change-pos">+2.4%</span></span></div>
+                <div class="market-item"><span>EUR/INC</span><span style="text-align:right;"><b>5,26</b><br><span style="color:var(--dim)">0.00%</span></span></div>
+                <div class="market-item"><span>BRL/INC</span><span style="text-align:right;"><b>0,95</b><br><span style="color:var(--red)">-0.12%</span></span></div>
+            </div>
         </div>
 
-        <div id="id" class="screen">
-            <div class="card" style="text-align:center;">
-                <div style="font-size:0.7em; color:var(--blue); margin-bottom:15px;">QR CODE DE ACESSO SOBERANO</div>
-                <img id="qr-core" src="" style="width:200px; border-radius:10px; border:2px solid var(--blue); padding:10px; background:#fff;">
-                <div style="font-family:monospace; font-size:0.6em; color:var(--dim); margin-top:15px;" id="addr-txt">VINCULANDO...</div>
+        <div id="trade" class="page">
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <button class="btn-buy" style="margin-right:5px;">COMPRAR</button>
+                    <button class="btn-sell" style="opacity:0.5;">VENDER</button>
+                </div>
+                <div class="label">Quantia</div>
+                <input type="number" id="trade-val" style="width:100%; background:#2b3139; border:none; color:#fff; padding:15px; border-radius:4px; font-size:1.2em; outline:none;" placeholder="0.00">
+                <div style="display:flex; justify-content:space-between; font-size:0.7em; margin-top:10px;">
+                    <span color="var(--dim)">Disponível:</span>
+                    <span color="var(--text)">10.000.000 INC</span>
+                </div>
+                <button class="btn-buy" style="width:100%; margin-top:20px; background:var(--green)" onclick="confirmTrade()">COMPRAR INC</button>
+            </div>
+        </div>
+
+        <div id="wallet" class="page">
+            <div class="card">
+                <div class="label">Equivalente em Dólar</div>
+                <div class="big-val" id="total-usd">$ 0.00</div>
+                <div style="font-size:0.75em; color:var(--dim)">≈ 0.00000000 BTC</div>
+            </div>
+            <div class="card">
+                <div class="label">Ativos no Cofre</div>
+                <div class="market-item"><span>INC Coin</span><b id="wal-inc">0.00</b></div>
+                <div class="market-item"><span>Bitcoin</span><b id="wal-btc">0.0000</b></div>
+                <div class="market-item"><span>Dólar (USDT)</span><b id="wal-usd">0.00</b></div>
+            </div>
+        </div>
+
+        <div id="gov" class="page">
+            <div class="card" style="border-left: 4px solid var(--yellow);">
+                <div class="label" style="color:var(--yellow)">Taxa de Governança (2%)</div>
+                <div class="big-val" id="wal-gov">0.00 INC</div>
+                <p style="font-size:0.65em; color:var(--dim);">Fundos retidos para manutenção da segurança quântica de 2.500 bits sob custódia de Alexandre Freire.</p>
             </div>
         </div>
 
     </div>
 
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="tab('market', this)">Início</div>
+        <div class="tab-item" onclick="tab('market', this)">Mercados</div>
+        <div class="tab-item" onclick="tab('trade', this)">Trade</div>
+        <div class="tab-item" onclick="tab('wallet', this)">Carteira</div>
+    </div>
+
     <script>
-        function tab(s, el) {
-            document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-            document.getElementById(s).classList.add('active');
+        let userData = JSON.parse(localStorage.getItem('inc_exchange')) || { inc: 0, btc: 0, usd: 0, gov: 0, uid: Math.floor(100000 + Math.random() * 900000) };
+
+        function tab(p, el) {
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active-page'));
+            document.querySelectorAll('.nav-link, .tab-item').forEach(x => x.classList.remove('active'));
+            document.getElementById(p).classList.add('active-page');
             el.classList.add('active');
         }
 
-        window.onload = () => {
-            const addr = "INC_8x" + Math.random().toString(16).slice(2, 14).toUpperCase();
-            document.getElementById('addr-txt').innerText = addr;
-            document.getElementById('qr-core').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + addr;
-        };
+        function sync() {
+            document.getElementById('uid').innerText = "UID: " + userData.uid;
+            document.getElementById('wal-inc').innerText = userData.inc.toFixed(2);
+            document.getElementById('wal-btc').innerText = userData.btc.toFixed(4);
+            document.getElementById('wal-usd').innerText = userData.usd.toFixed(2);
+            document.getElementById('wal-gov').innerText = userData.gov.toFixed(2);
+            document.getElementById('total-usd').innerText = "$ " + (userData.inc * 5.26 + userData.usd).toFixed(2);
+            localStorage.setItem('inc_exchange', JSON.stringify(userData));
+        }
+
+        function confirmTrade() {
+            let val = parseFloat(document.getElementById('trade-val').value);
+            if(!val) return alert("Insira um valor.");
+            
+            // Lógica: Ele gasta "dólar fictício" para ganhar INC
+            let fee = val * 0.02;
+            let credit = val * 0.98;
+            userData.inc += credit;
+            userData.gov += fee;
+            alert("Ordem de compra executada! Fee de 2% processado.");
+            sync();
+            tab('wallet', document.querySelectorAll('.nav-link')[2]);
+        }
+
+        sync();
     </script>
 </body>
 </html>
