@@ -3,30 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | EXCHANGE_INTERFACE</title>
+    <title>INC.OS | SMART_CHECKOUT</title>
     <style>
-        :root { --bg: #050505; --card: #111; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; --dim: #555; }
+        :root { --bg: #050505; --card: #0a0a0a; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; --dim: #444; }
         * { box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
         body { background: var(--bg); color: var(--text); margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        header { background: var(--card); padding: 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        header { background: #111; padding: 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         nav { background: #000; display: flex; border-bottom: 1px solid #222; }
         .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.65em; color: var(--dim); cursor: pointer; text-transform: uppercase; }
-        .nav-item.active { color: var(--blue); border-bottom: 2px solid var(--blue); background: rgba(0,170,255,0.05); }
+        .nav-item.active { color: var(--blue); border-bottom: 2px solid var(--blue); }
         #main-view { flex: 1; overflow-y: auto; padding: 15px; }
-        .page { display: none; } .page.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .card { background: var(--card); border: 1px solid #222; border-radius: 8px; padding: 18px; margin-bottom: 15px; }
-        .label { font-size: 0.55em; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        .page { display: none; } .page.active { display: block; }
+        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        .label { font-size: 0.6em; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         
-        /* ESTILO CORRETORA */
-        .fiat-box { background: #000; border: 1px solid #333; border-radius: 6px; padding: 15px; margin: 10px 0; display: flex; align-items: center; justify-content: space-between; }
-        .fiat-input { background: none; border: none; color: #fff; font-size: 1.5em; width: 60%; outline: none; font-weight: bold; }
-        .currency-label { color: var(--blue); font-weight: bold; font-size: 0.9em; }
+        /* INPUT ESTILO CARTÃO/CORRETORA */
+        .input-group { background: #000; border: 1px solid #333; border-radius: 8px; padding: 15px; margin: 10px 0; display: flex; align-items: center; justify-content: space-between; }
+        .input-field { background: none; border: none; color: #fff; font-size: 1.8em; width: 60%; outline: none; font-weight: bold; }
+        .unit { color: var(--blue); font-weight: bold; font-size: 0.9em; }
         
-        .conversion-info { background: rgba(0,170,255,0.03); border-left: 3px solid var(--blue); padding: 12px; margin: 15px 0; font-size: 0.75em; }
-        .btn-deposit { background: var(--green); color: #000; border: none; padding: 18px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1em; text-transform: uppercase; }
-        .bank-details { display: none; background: #080808; border: 1px dashed #444; padding: 15px; border-radius: 6px; margin-top: 15px; animation: slideDown 0.4s ease; }
-        @keyframes slideDown { from { height: 0; opacity: 0; } to { height: auto; opacity: 1; } }
+        .calc-box { background: rgba(0,170,255,0.03); border-left: 4px solid var(--blue); padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .calc-line { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85em; }
+        
+        .btn-main { background: var(--green); color: #000; border: none; padding: 20px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1em; text-transform: uppercase; transition: 0.3s; }
+        .btn-main:active { transform: scale(0.98); background: #32e612; }
+
+        /* MODAL DE PAGAMENTO OCULTO */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-box { background: #111; border: 1px solid var(--blue); padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; }
     </style>
 </head>
 <body>
@@ -35,88 +39,78 @@
         <div style="font-size:0.6em; color:var(--green)">EXCHANGE_LIVE</div>
     </header>
     <nav>
-        <div class="nav-item active" onclick="showPage('pay', this)">Comprar INC</div>
-        <div class="nav-item" onclick="showPage('dash', this)">Dashboard</div>
-        <div class="nav-item" onclick="showPage('gov', this)">Gov 2%</div>
+        <div class="nav-item active" onclick="tab('pay', this)">Comprar INC</div>
+        <div class="nav-item" onclick="tab('dash', this)">Dashboard</div>
+        <div class="nav-item" onclick="tab('gov', this)">Gov 2%</div>
     </nav>
     <div id="main-view">
-        
         <div id="pay" class="page active">
             <div class="card">
-                <div class="label">Você deposita</div>
-                <div class="fiat-box">
-                    <input type="number" id="fiatAmount" class="fiat-input" placeholder="0.00" oninput="convert()">
-                    <span class="currency-label">EUR / BRL</span>
+                <div class="label">Valor do Investimento</div>
+                <div class="input-group">
+                    <input type="number" id="amt" class="input-field" placeholder="0" oninput="run()">
+                    <span class="unit">EUR / BRL</span>
                 </div>
 
-                <div class="conversion-info">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <span>Você recebe (98%):</span>
-                        <b style="color:var(--green)" id="userInc">0.00 INC</b>
-                    </div>
-                    <div style="display:flex; justify-content:space-between;">
-                        <span>Taxa de Governança (2%):</span>
-                        <b style="color:var(--gold)" id="govInc">0.00 INC</b>
-                    </div>
+                <div class="calc-box">
+                    <div class="calc-line"><span>Recebe (98%):</span><b style="color:var(--green)" id="uInc">0.00 INC</b></div>
+                    <div class="calc-line"><span>Taxa Gov (2%):</span><b style="color:var(--gold)" id="gInc">0.00 INC</b></div>
                 </div>
 
-                <button class="btn-deposit" onclick="showBank()">Finalizar Compra</button>
-
-                <div id="bankDetails" class="bank-details">
-                    <div class="label" style="color:var(--blue); margin-bottom:10px;">Dados para Pagamento</div>
-                    <div style="font-size:0.8em; line-height:1.6;">
-                        IBAN: <b style="word-break:break-all;">PT50 0007 0000 0081 9509 1572 3</b><br>
-                        PIX: <b>009.532.169-61</b><br>
-                        Beneficiário: <b>Alexandre Freire</b>
-                    </div>
-                </div>
+                <button class="btn-main" onclick="openGate()">Finalizar Compra</button>
             </div>
         </div>
 
         <div id="dash" class="page">
             <div class="card">
-                <div class="label">SALDO EM CUSTÓDIA</div>
-                <div id="circ" style="font-size:2em; font-weight:bold; color:var(--green); margin-top:10px;">...</div>
-                <div style="font-size:0.55em; color:var(--dim); margin-top:10px;">MAX SUPPLY: 10,000,000 INC</div>
+                <div class="label">ATUAL CIRCULANTE</div>
+                <div id="circ" style="font-size:2.2em; font-weight:bold; color:var(--green);">...</div>
             </div>
         </div>
 
         <div id="gov" class="page">
             <div class="card" style="border-color:var(--gold)">
                 <div class="label" style="color:var(--gold)">RESERVA GOVERNANÇA 2%</div>
-                <div id="reserva" style="font-size:2em; font-weight:bold; color:var(--gold); margin-top:10px;">...</div>
+                <div id="res" style="font-size:2.2em; font-weight:bold; color:var(--gold);">...</div>
             </div>
         </div>
-
     </div>
+
+    <div id="gate" class="modal">
+        <div class="modal-box">
+            <h3 style="color:var(--blue); margin-top:0;">CHECKOUT SEGURO</h3>
+            <p style="font-size:0.8em; color:#888;">Transfira o valor exato para validar a emissão na Grade Lattice.</p>
+            <div style="background:#000; padding:15px; border-radius:8px; text-align:left; font-family:monospace; font-size:0.75em; margin:20px 0; border:1px solid #333;">
+                IBAN: <b>PT50 0007 0000 0081 9509 1572 3</b><br><br>
+                PIX: <b>009.532.169-61</b><br><br>
+                Favorecido: <b>Alexandre Freire</b>
+            </div>
+            <button class="btn-main" style="background:var(--blue)" onclick="document.getElementById('gate').style.display='none'">Concluído</button>
+        </div>
+    </div>
+
     <script>
-        function showPage(p, e) {
+        function tab(p, e) {
             document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
             document.getElementById(p).classList.add('active');
             e.classList.add('active');
         }
-
-        function convert() {
-            let amount = document.getElementById("fiatAmount").value || 0;
-            // Cotação base: 1 EUR = 5.2 INC
-            let totalInc = amount * 5.2;
-            document.getElementById("userInc").innerText = (totalInc * 0.98).toFixed(2) + " INC";
-            document.getElementById("govInc").innerText = (totalInc * 0.02).toFixed(2) + " INC";
+        function run() {
+            let v = document.getElementById("amt").value || 0;
+            document.getElementById("uInc").innerText = (v * 5.2 * 0.98).toFixed(2) + " INC";
+            document.getElementById("gInc").innerText = (v * 5.2 * 0.02).toFixed(2) + " INC";
         }
-
-        function showBank() {
-            let amount = document.getElementById("fiatAmount").value;
-            if(!amount || amount <= 0) { alert("Digite um valor para converter."); return; }
-            document.getElementById("bankDetails").style.display = "block";
+        function openGate() {
+            if(document.getElementById("amt").value > 0) document.getElementById("gate").style.display='flex';
+            else alert("Digite um valor.");
         }
-
         async function update() {
             try {
                 const r = await fetch("/api/nano_status");
                 const d = await r.json();
                 document.getElementById("circ").innerText = d.circulante.toLocaleString() + " INC";
-                document.getElementById("reserva").innerText = d.reserva_gov.toLocaleString() + " INC";
+                document.getElementById("res").innerText = d.reserva_gov.toLocaleString() + " INC";
             } catch(e) {}
         }
         setInterval(update, 5000); update();
