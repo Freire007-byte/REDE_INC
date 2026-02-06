@@ -3,102 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | ATOMIC_VAULT</title>
+    <title>INC.OS | OMNI_CHAIN_HUB</title>
     <style>
-        :root { --bg: #020202; --card: #080808; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #ffffff; --dim: #444; }
-        * { box-sizing: border-box; font-family: "SF Mono", "Fira Code", monospace; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #020202; --card: #0a0a0a; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #ffffff; --dim: #555; }
+        * { box-sizing: border-box; font-family: "SF Mono", monospace; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* BARRA DE PROTEÇÃO SUPERIOR */
-        .shield-bar { background: #000; padding: 12px 20px; border-bottom: 2px solid var(--blue); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 15px rgba(0,170,255,0.2); }
-        .shield-status { font-size: 0.6em; font-weight: bold; color: var(--blue); letter-spacing: 2px; }
-        .lattice-bits { font-size: 0.55em; color: var(--green); }
+        .header-net { background: #000; padding: 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .net-status { font-size: 0.6em; color: var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        header { padding: 20px; text-align: center; border-bottom: 1px solid #111; }
-        .total-balance { font-size: 0.6em; color: var(--dim); text-transform: uppercase; letter-spacing: 2px; }
-        .amount-main { font-size: 2.8em; font-weight: 900; margin: 10px 0; letter-spacing: -2px; }
+        #main-scroll { flex: 1; overflow-y: auto; padding: 20px; }
+        
+        .section-title { font-size: 0.6em; color: var(--dim); letter-spacing: 2px; margin: 20px 0 10px 0; text-transform: uppercase; }
+        
+        /* CARDS DE CONEXÃO COM OUTRAS REDES */
+        .bridge-card { background: var(--card); border: 1px solid #151515; border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .net-info { display: flex; align-items: center; gap: 12px; }
+        .net-icon { width: 30px; height: 30px; border-radius: 50%; background: #111; display: flex; align-items: center; justify-content: center; font-size: 0.7em; border: 1px solid #333; }
+        .sync-tag { font-size: 0.5em; padding: 3px 6px; border-radius: 4px; background: rgba(0,255,0,0.1); color: var(--green); }
 
-        #main-view { flex: 1; overflow-y: auto; padding: 20px; }
-        .page { display: none; } .active-page { display: block; }
+        /* CARTEIRA LOCAL VS GLOBAL */
+        .wallet-box { background: linear-gradient(145deg, #0d0d0d, #050505); border-radius: 20px; padding: 25px; border: 1px solid var(--blue); margin-bottom: 20px; }
+        .bal-label { font-size: 0.55em; color: var(--blue); margin-bottom: 5px; }
+        .bal-value { font-size: 2.2em; font-weight: 900; letter-spacing: -1px; }
 
-        /* CARDS DE ATIVOS ESTILO COFRE */
-        .asset-card { background: var(--card); border: 1px solid #151515; border-radius: 12px; padding: 18px; margin-bottom: 15px; position: relative; overflow: hidden; }
-        .asset-card::before { content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 3px; background: var(--blue); }
-        .asset-info { display: flex; justify-content: space-between; align-items: center; }
-        .asset-name { font-size: 0.8em; font-weight: bold; }
-        .asset-val { font-size: 1.1em; font-weight: 900; }
-        .protection-tag { font-size: 0.5em; color: var(--green); margin-top: 8px; display: block; }
-
-        /* NAVEGAÇÃO SOBERANA */
-        nav { background: #050505; display: flex; border-top: 1px solid #111; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { flex: 1; padding: 20px; text-align: center; font-size: 0.6em; color: var(--dim); cursor: pointer; }
-        .nav-item.active { color: var(--blue); }
-
-        /* BOTÃO DE APORTE */
-        .btn-deposit { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 8px; font-weight: 900; width: 100%; margin-top: 10px; cursor: pointer; text-transform: uppercase; }
+        .btn-sync { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="shield-bar">
-        <div class="shield-status">● SVP_SHIELD_ACTIVE</div>
-        <div class="lattice-bits">LATTICE: 2500_BITS</div>
+    <div class="header-net">
+        <div style="font-weight: 900; font-size: 1.1em;">INC<span style="color:var(--blue)">.NEXUS</span></div>
+        <div class="net-status">● GRADE_LATTICE_ONLINE</div>
     </div>
 
-    <header>
-        <div class="total-balance">Patrimônio Protegido</div>
-        <div class="amount-main" id="total-usd">$ 0.00</div>
-        <div style="font-size:0.5em; color:var(--green);">IDENTIDADE: <span id="user-id">VINCULANDO...</span></div>
-    </header>
-
-    <div id="main-view">
-        <div id="wallet" class="page active-page">
-            <div class="label" style="font-size:0.6em; color:var(--dim); margin-bottom:10px;">ATIVOS NA REDE</div>
-            
-            <div class="asset-card">
-                <div class="asset-info">
-                    <span class="asset-name">INC COIN (Soberana)</span>
-                    <span class="asset-val" id="bal-inc">0.00</span>
-                </div>
-                <span class="protection-tag">ESTADO: IMUTÁVEL NO BLOCO GÊNESE</span>
-            </div>
-
-            <div class="asset-card" style="border-color: #f7931a;">
-                <div class="asset-info">
-                    <span class="asset-name">BITCOIN (Bridge)</span>
-                    <span class="asset-val" id="bal-btc">0.0000</span>
-                </div>
-                <span class="protection-tag" style="color:#f7931a">ESTADO: ESPELHADO VIA LATTICE</span>
-            </div>
-
-            <div class="asset-card" style="border-color: var(--gold);">
-                <div class="asset-info">
-                    <span class="asset-name">GOVERNANÇA (Taxa 2%)</span>
-                    <span class="asset-val" id="bal-gov">$ 0.00</span>
-                </div>
-                <span class="protection-tag" style="color:var(--gold)">ESTADO: CUSTÓDIA ARQUITETO</span>
-            </div>
-
-            <button class="btn-deposit" onclick="alert('Iniciando Gateway Omni-Channel...')">Depositar Liquidez</button>
+    <div id="main-scroll">
+        <div class="wallet-box">
+            <div class="bal-label">DISPONIBILIDADE OMNI-CHAIN</div>
+            <div class="bal-value" id="total-inc">0.00 INC</div>
+            <div style="font-size: 0.6em; color: var(--dim); margin-top: 10px;">ID SOBERANO: <span id="uid" style="color:#fff">---</span></div>
         </div>
-    </div>
 
-    <nav>
-        <div class="nav-item active">COFRE</div>
-        <div class="nav-item">MERCADO</div>
-        <div class="nav-item">REDES</div>
-        <div class="nav-item">REGRAS</div>
-    </nav>
+        <div class="section-title">Pareamento de Redes (Bridges)</div>
+        
+        <div class="bridge-card">
+            <div class="net-info">
+                <div class="net-icon" style="color:#f7931a">₿</div>
+                <div><div style="font-size:0.8em;">Bitcoin Network</div><div class="sync-tag">SINCRONIZADO</div></div>
+            </div>
+            <div style="text-align:right;"><div style="font-size:0.7em;">0.0000</div><div style="font-size:0.5em; color:var(--dim);">wINC/BTC</div></div>
+        </div>
+
+        <div class="bridge-card">
+            <div class="net-info">
+                <div class="net-icon" style="color:#627eea">Ξ</div>
+                <div><div style="font-size:0.8em;">Ethereum L1</div><div class="sync-tag">SINCRONIZADO</div></div>
+            </div>
+            <div style="text-align:right;"><div style="font-size:0.7em;">0.00</div><div style="font-size:0.5em; color:var(--dim);">wINC/ETH</div></div>
+        </div>
+
+        <div class="bridge-card">
+            <div class="net-info">
+                <div class="net-icon" style="color:var(--blue)">S</div>
+                <div><div style="font-size:0.8em;">Solana (SPL)</div><div class="sync-tag">SINCRONIZADO</div></div>
+            </div>
+            <div style="text-align:right;"><div style="font-size:0.7em;">0.00</div><div style="font-size:0.5em; color:var(--dim);">INC/SOL</div></div>
+        </div>
+
+        <div class="card" style="background:#0a0a0a; border-radius:12px; padding:20px; margin-top:20px; border-left: 4px solid var(--gold);">
+            <div style="font-size:0.6em; color:var(--gold);">CUSTÓDIA GOVERNANÇA (2%)</div>
+            <div id="bal-gov" style="font-size:1.2em; font-weight:bold;">$ 0.00</div>
+            <p style="font-size:0.5em; color:var(--dim); margin-top:10px;">Ativos bloqueados para garantia de liquidez cross-chain.</p>
+        </div>
+
+        <button class="btn-sync" onclick="syncGlobal()">Forçar Sincronização Global</button>
+    </div>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('inc_v21')) || { inc: 0, btc: 0, gov: 0, id: "INC_" + Math.random().toString(16).slice(2, 8).toUpperCase() };
+        let db = JSON.parse(localStorage.getItem('inc_v21')) || { inc: 0, gov: 0, id: "INC_" + Math.random().toString(16).slice(2, 8).toUpperCase() };
+
+        function syncGlobal() {
+            alert("Sincronizando com Nodes Bitcoin, Ethereum e Solana...");
+            setTimeout(() => {
+                alert("Rede INC sincronizada. Suas moedas agora são visíveis em 3 protocolos externos.");
+            }, 2000);
+        }
 
         window.onload = () => {
-            document.getElementById('user-id').innerText = db.id;
-            document.getElementById('bal-inc').innerText = db.inc.toFixed(2) + " INC";
-            document.getElementById('bal-btc').innerText = db.btc.toFixed(4) + " BTC";
+            document.getElementById('uid').innerText = db.id;
+            document.getElementById('total-inc').innerText = db.inc.toFixed(2) + " INC";
             document.getElementById('bal-gov').innerText = "$ " + db.gov.toFixed(2);
-            document.getElementById('total-usd').innerText = "$ " + (db.inc * 5.26 + db.gov).toFixed(2);
         };
     </script>
 </body>
