@@ -4,8 +4,12 @@ import time
 
 app = FastAPI()
 
-# MARCO ZERO DA REDE INC.io (4 de Fev 2026)
-START_TIME = 1738627200 
+# PROTOCOLO DE GÊNESE - VALORES TOTAIS E IMUTÁVEIS
+MAX_SUPPLY = 10000000.00
+# A rede nasce com o saldo que você já acumulou, o resto é reserva de emissão
+SALDO_ATUAL = 789442.10 
+RESERVA_GOV = 16104.62
+START_TIME = 1738784193
 
 @app.get('/')
 async def read_index():
@@ -14,21 +18,14 @@ async def read_index():
 @app.get('/api/nano_status')
 async def nano_status():
     agora = time.time()
-    # MINERAÇÃO ATÔMICA: Baseada estritamente no tempo do Arquiteto
-    # Saldo refletindo os ~315k+ INC atuais
-    saldo = round(315595.41 + (agora - 1738784193) * 0.015, 2)
-    
-    # DADOS DE TRÁFEGO E SOBERANIA
-    visitas = 28514 + int((agora - START_TIME) / 3600)
-    
-    # ASSINATURA DA CHAVE ATÔMICA (Baseada no Artigo Lattice)
-    # Gerando um hash dinâmico que valida seu acesso único
-    atomic_key = hex(int(agora * 1000))[2:]
+    # Mineração constante até atingir o teto de 10M
+    minerado = (agora - START_TIME) * 0.015
+    total_circulante = min(SALDO_ATUAL + minerado, MAX_SUPPLY)
     
     return {
-        'saldo': saldo,
-        'integridade': 99.99,
-        'visitas': visitas,
-        'key_status': 'ATOMIC_LOCKED',
-        'signature': atomic_key
+        'circulante': round(total_circulante, 2),
+        'reserva_gov': round(RESERVA_GOV + (minerado * 0.02), 2),
+        'disponivel_emissao': round(MAX_SUPPLY - total_circulante, 2),
+        'percent_emitido': round((total_circulante / MAX_SUPPLY) * 100, 2),
+        'status': 'GENESIS_BLOCK_LOCKED'
     }

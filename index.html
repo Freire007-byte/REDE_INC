@@ -2,116 +2,65 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INC.OS | CORE_v4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>INC.OS | GENESIS</title>
     <style>
-        :root { --bg: #0a0a0a; --card: #111; --blue: #00aaff; --green: #39ff14; --text: #e0e0e0; }
-        body { background: var(--bg); color: var(--text); font-family: "Segoe UI", sans-serif; margin: 0; padding: 15px; display: grid; grid-template-columns: 240px 1fr; gap: 15px; }
-        @media (max-width: 768px) { body { grid-template-columns: 1fr; } }
-
-        .sidebar { background: var(--card); padding: 20px; border-radius: 8px; border: 1px solid #222; }
-        .logo { font-size: 1.5em; font-weight: bold; margin-bottom: 25px; border-bottom: 2px solid var(--blue); }
-        .status-item { font-size: 0.65em; color: #555; margin-bottom: 12px; }
-        .status-item b { color: var(--blue); display: block; font-size: 1.1em; }
-
-        .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: var(--card); border-radius: 8px; border: 1px solid #222; padding: 18px; }
-        .big-value { font-size: 2em; font-weight: bold; color: var(--blue); }
-        .active-text { color: var(--green) !important; text-shadow: 0 0 10px var(--green); }
-
-        /* QR CODE FUNCIONAL */
-        .qr-box { 
-            width: 100px; height: 100px; background: #fff; padding: 5px; border-radius: 4px; 
-            cursor: pointer; position: relative; transition: 0.3s; margin-right: 20px;
-        }
-        .qr-box:hover { box-shadow: 0 0 20px var(--blue); transform: scale(1.05); }
-        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--blue); top: 0; animation: scan 2s infinite linear; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
-        /* MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal-content { background: #000; border: 1px solid var(--blue); padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; text-align: center; }
-        .key-display { background: #050505; border: 1px solid #222; padding: 15px; color: var(--green); font-family: monospace; font-size: 0.7em; margin: 20px 0; word-break: break-all; }
-        .btn-sync { background: var(--blue); color: #000; border: none; padding: 15px; font-weight: bold; width: 100%; border-radius: 4px; cursor: pointer; }
+        :root { --bg: #050505; --card: #111; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #e0e0e0; }
+        body { background: var(--bg); color: var(--text); font-family: "Segoe UI", sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        header { background: var(--card); padding: 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .page { padding: 20px; flex: 1; overflow-y: auto; }
+        .card { background: var(--card); border: 1px solid #222; border-radius: 8px; padding: 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
+        .label { font-size: 0.6em; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+        .big-val { font-size: 2.2em; font-weight: bold; color: var(--blue); margin-top: 10px; }
+        .progress-container { background: #1a1a1a; height: 12px; border-radius: 6px; margin: 15px 0; border: 1px solid #333; }
+        .progress-bar { background: linear-gradient(90deg, var(--blue), var(--green)); height: 100%; width: 0%; transition: 1.5s ease-in-out; }
+        .btn-gov { background: var(--gold); color: #000; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
+    <header>
+        <div style="font-weight:bold; letter-spacing:2px;">INC<span style="color:var(--blue)">.OS</span></div>
+        <div style="font-size:0.6em; color:var(--green)">PROTOCOLO GÊNESIS ATIVO</div>
+    </header>
 
-    <div class="sidebar">
-        <div class="logo">INC<span style="color:var(--blue)">.OS</span></div>
-        <div class="status-item">NODE STATUS<b id="node-status">STANDBY</b></div>
-        <div class="status-item">LATÊNCIA<b id="lat">0ms</b></div>
-        <div class="status-item">PULSOS ATIVOS<b>37333</b></div>
-    </div>
-
-    <div class="main-content">
+    <div class="page">
         <div class="card">
-            <div style="font-size:0.7em;color:#555">ATIVOS TOTAIS</div>
-            <div class="big-value" id="saldo">OFFLINE</div>
-        </div>
-        <div class="card">
-            <div style="font-size:0.7em;color:#555">SINCRONIA LATTICE</div>
-            <div class="big-value" id="sync-val">0.00%</div>
-        </div>
-
-        <div class="card" style="grid-column: span 2; display: flex; align-items: center;">
-            <div class="qr-box" onclick="abrirCofre()">
-                <div class="scan-line"></div>
-                <img id="qr-img" src="" style="width:100%">
-            </div>
-            <div style="font-size: 0.8em;">
-                <div style="color:#555">ID: <span id="user-tag" style="color:#fff">AGUARDANDO...</span></div>
-                <div style="margin-top:5px; color:#555">SEC: <span id="sec-tag" style="color:var(--blue)">BLOQUEADO</span></div>
-                <button onclick="abrirCofre()" style="margin-top:10px; background:var(--blue); border:none; padding:8px 12px; font-weight:bold; cursor:pointer; border-radius:4px;">CRIAR CHAVE 2500</button>
+            <div class="label">Massa Monetária Circulante</div>
+            <div id="circ" class="big-val">0.00 INC</div>
+            <div class="progress-container"><div id="bar" class="progress-bar"></div></div>
+            <div style="display:flex; justify-content:space-between; font-size:0.6em; color:#444;">
+                <span>ORIGEM: 0 INC</span>
+                <span id="perc">0%</span>
+                <span>TETO: 10.000.000 INC</span>
             </div>
         </div>
-    </div>
 
-    <div id="modalCofre" class="modal">
-        <div class="modal-content">
-            <h2 style="color:var(--blue); margin:0;">GERAÇÃO DE CHAVE</h2>
-            <p style="font-size:0.8em; color:#666;">n=2500 bits | Fórmula Freire | SVP Integrity</p>
-            <div class="key-display" id="chave-atômica">...</div>
-            <button class="btn-sync" onclick="sincronizarCore()">CONFIRMAR E SINCRONIZAR</button>
+        <div class="card" style="border-left: 4px solid var(--gold);">
+            <div class="label" style="color:var(--gold)">Cofre do Arquiteto (Reserva 2%)</div>
+            <div id="gov" class="big-val" style="color:var(--gold)">0.00 INC</div>
+            <div style="font-size:0.55em; color:#555; margin-top:10px;">Lastro garantido pelo IBAN: PT50...15723</div>
+        </div>
+
+        <div class="card">
+            <div class="label">Status da Emissão</div>
+            <div id="status" style="font-size:0.8em; color:var(--green); margin-top:10px; font-family:monospace;">SVP_VALIDATING...</div>
         </div>
     </div>
 
     <script>
-        let chaveMestra = "";
-        let isSinc = false;
-
-        function abrirCofre() {
-            chaveMestra = "INC_2500_" + Array.from({length: 40}, () => Math.floor(Math.random() * 16).toString(16)).join("").toUpperCase();
-            document.getElementById("chave-atômica").innerText = chaveMestra;
-            document.getElementById("modalCofre").style.display = "flex";
-        }
-
-        function sincronizarCore() {
-            isSinc = true;
-            document.getElementById("modalCofre").style.display = "none";
-            document.getElementById("node-status").innerText = "SOVEREIGN";
-            document.getElementById("node-status").className = "active-text";
-            document.getElementById("user-tag").innerText = chaveMestra.substring(0, 12) + "...";
-            document.getElementById("sec-tag").innerText = "LATTICE_ACTIVE";
-            document.getElementById("sec-tag").style.color = "var(--green)";
-            document.getElementById("sync-val").innerText = "100.00%";
-            document.getElementById("sync-val").classList.add("active-text");
-            document.getElementById("saldo").classList.add("active-text");
-            alert("SINCRONIA ESTABELECIDA.");
-        }
-
         async function update() {
-            const t0 = performance.now();
             try {
                 const r = await fetch("/api/nano_status");
                 const d = await r.json();
-                if(isSinc) document.getElementById("saldo").innerText = d.saldo.toLocaleString("en-US", {minimumFractionDigits: 2}) + " INC";
-                document.getElementById("lat").innerText = Math.round(performance.now() - t0) + "ms";
+                document.getElementById("circ").innerText = d.circulante.toLocaleString() + " INC";
+                document.getElementById("gov").innerText = d.reserva_gov.toLocaleString() + " INC";
+                document.getElementById("perc").innerText = d.percent_emitido + "%";
+                document.getElementById("bar").style.width = d.percent_emitido + "%";
+                document.getElementById("status").innerText = "BLOCO_GENESE: ATIVO
+RESTANTE: " + d.disponivel_emissao.toLocaleString() + " INC";
             } catch(e) {}
-            document.getElementById("qr-img").src = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + Math.random();
         }
-        setInterval(update, 3000);
-        update();
+        setInterval(update, 3000); update();
     </script>
 </body>
 </html>
