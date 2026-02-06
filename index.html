@@ -3,130 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.OS | MANIFESTO & EXCHANGE</title>
+    <title>INC.OS | CLIENT_CENTRAL</title>
     <style>
-        :root { --bg: #050505; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #ffffff; --dim: #666; }
-        * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; }
+        :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #ffae00; --text: #ffffff; --dim: #555; }
+        * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .telemetry { background: #111; padding: 10px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; font-family: monospace; font-size: 0.6em; }
-        nav { background: #000; display: flex; border-bottom: 1px solid #222; }
-        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.6em; color: var(--dim); cursor: pointer; text-transform: uppercase; }
-        .nav-item.active { color: var(--blue); border-bottom: 2px solid var(--blue); }
-
         .screen { display: none; height: 100%; flex-direction: column; padding: 20px; overflow-y: auto; animation: fadeIn 0.4s ease; }
         .active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
-        .btn-prime { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; }
+        /* COMPONENTES */
+        .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; padding: 25px; margin-bottom: 15px; }
+        .btn-action { background: var(--blue); color: #000; border: none; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
+        .btn-send { background: #111; color: var(--blue); border: 1px solid var(--blue); padding: 12px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; }
         
-        /* QR PORTAL QUE FUNCIONA */
-        .qr-portal { width: 200px; height: 200px; background: #fff; padding: 10px; border-radius: 12px; margin: 20px auto; position: relative; border: 4px solid var(--blue); cursor: pointer; }
-        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--blue); top: 0; left:0; animation: scan 2s infinite linear; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        /* DASHBOARD CLIENTE */
+        .balance-box { text-align: center; padding: 30px 0; }
+        .bal-val { font-size: 3em; font-weight: 900; color: #fff; }
+        .addr-tag { font-family: monospace; font-size: 0.6em; color: var(--dim); background: #000; padding: 8px; border-radius: 5px; margin-top: 10px; display: inline-block; }
 
-        .data-list { font-family: monospace; font-size: 0.65em; background: #000; padding: 12px; border-radius: 8px; border-left: 3px solid var(--blue); word-break: break-all; margin-top: 10px; }
+        /* MOVIMENTAÇÃO */
+        .input-group { background: #000; border: 1px solid #222; border-radius: 12px; padding: 15px; margin-top: 10px; }
+        .fiat-input { background: none; border: none; color: #fff; width: 100%; font-size: 1.2em; outline: none; }
     </style>
 </head>
 <body>
 
-    <div class="telemetry">
-        <span>LATENCY: <b id="lat">--</b></span>
-        <span>TPS: <b id="tps">--</b></span>
-        <span>CORE: <b>ACTIVE</b></span>
+    <div id="scr-login" class="screen active" style="justify-content:center; text-align:center;">
+        <h1 style="font-size: 2.5em;">INC<span style="color:var(--blue)">.OS</span></h1>
+        <div class="card">
+            <p style="font-size:0.8em; color:var(--dim);">Toque no QR para criar sua carteira e acessar o sistema.</p>
+            <div style="width:180px; height:180px; background:#fff; margin:20px auto; padding:10px; border-radius:10px; cursor:pointer; border:4px solid var(--blue);" onclick="login()">
+                <img id="qr-log" src="" style="width:100%">
+            </div>
+            <button class="btn-action" onclick="login()">Gerar Identidade Lattice</button>
+        </div>
     </div>
 
-    <nav>
-        <div class="nav-item active" onclick="tab('manifesto', this)">Manifesto</div>
-        <div class="nav-item" onclick="tab('wallet', this)">Carteira</div>
-        <div class="nav-item" onclick="tab('exchange', this)">Comprar</div>
-    </nav>
+    <div id="scr-client" class="screen">
+        <header style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-weight:900;">INC.OS</div>
+            <div id="status" style="font-size:0.5em; color:var(--gold); border:1px solid var(--gold); padding:4px 8px; border-radius:4px;">ACCOUNT_ACTIVE</div>
+        </header>
 
-    <div id="main-view">
-        
-        <div id="manifesto" class="screen active">
-            <h1 style="color:var(--blue); margin-top:0;">INC.OS</h1>
-            <p style="font-size:0.8em; color:var(--dim); line-height:1.6;">
-                A Rede INC nasceu da necessidade de uma <b>Veradeira Democracia</b>. 
-                Sob a liderança do Arquiteto <b>Alexandre Freire</b>, criamos um porto seguro 
-                onde a computação quântica não pode tocar e os bancos centrais não têm poder.
-            </p>
-            <div class="card">
-                <h3 style="margin:0; color:var(--gold);">POR QUE EXISTIMOS?</h3>
-                <p style="font-size:0.7em; color:#888;">
-                    Para garantir que o seu capital seja soberano. Os 2% de governança 
-                    são o combustível que mantém os 2.500 bits da nossa grade Lattice 
-                    impenetráveis, financiando a integridade da rede para sempre.
-                </p>
-            </div>
+        <div class="balance-box">
+            <div style="font-size:0.7em; color:var(--dim); letter-spacing:1px;">SALDO DISPONÍVEL</div>
+            <div id="client-bal" class="bal-val">0.00 INC</div>
+            <div id="client-addr" class="addr-tag">INC_8x...</div>
         </div>
 
-        <div id="wallet" class="screen">
-            <div class="card" style="text-align:center;">
-                <div style="font-size:0.6em; color:var(--dim); margin-bottom:10px;">TOQUE NO QR PARA GERAR SUA IDENTIDADE SOBERANA</div>
-                <div class="qr-portal" onclick="createAccount()">
-                    <div class="scan-line"></div>
-                    <img id="qr-img" src="" style="width:100%">
-                </div>
-            </div>
-
-            <div id="key-section" style="display:none;">
-                <div class="card">
-                    <div style="font-size:0.6em; color:var(--dim);">CHAVE PRIVADA (2500 BITS)</div>
-                    <div class="data-list" id="priv">...</div>
-                    <div style="font-size:0.6em; color:var(--dim); margin-top:15px;">ENDEREÇO DA CARTEIRA</div>
-                    <div class="data-list" id="addr" style="color:var(--green)">...</div>
-                    <p style="font-size:0.5em; color:var(--gold); margin-top:10px;">⚠️ Guarde estas chaves. Elas são sua única lei.</p>
-                </div>
-            </div>
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <button class="btn-send" onclick="showTransfer()">ENVIAR</button>
+            <button class="btn-send" style="background:var(--blue); color:#000;" onclick="showBuy()">COMPRAR / DEPOSITAR</button>
         </div>
 
-        <div id="exchange" class="screen">
-            <div class="card">
-                <div style="font-size:0.6em; color:var(--dim);">CONVERSOR GLOBAL</div>
-                <input type="number" id="amt" style="background:#000; border:1px solid #333; color:#fff; width:100%; padding:15px; border-radius:10px; font-size:1.5em; margin:15px 0;" placeholder="0.00" oninput="calc()">
-                <div id="prev" style="font-size:0.7em; color:var(--green); font-weight:bold;">Recebe: 0.00 INC</div>
-                <button class="btn-prime" style="margin-top:15px;" onclick="alert('Solicitando conexão bancária...')">COMPRAR AGORA</button>
-            </div>
-            <div class="card" style="border-left: 3px solid var(--gold);">
-                <div style="font-size:0.6em; color:var(--gold);">RESERVA DO ARQUITETO (2%)</div>
-                <div id="res-gov" style="font-size:1.2em; font-weight:bold; color:var(--gold);">0.00 INC</div>
-            </div>
+        <div class="card" style="border-left: 3px solid var(--gold);">
+            <div style="font-size:0.6em; color:var(--gold);">RESERVA DO ARQUITETO (2%)</div>
+            <div id="gov-val" style="font-size:1.1em; font-weight:bold; color:var(--gold);">0.00 INC</div>
         </div>
+    </div>
 
+    <div id="scr-buy" class="screen">
+        <div style="margin-bottom:20px; font-weight:bold; cursor:pointer;" onclick="back()">← VOLTAR</div>
+        <div class="card">
+            <div style="font-size:0.6em; color:var(--dim);">VALOR PARA INJETAR (EUR/BRL)</div>
+            <div class="input-group">
+                <input type="number" id="buy-val" class="fiat-input" placeholder="0.00" oninput="calc()">
+            </div>
+            <div id="preview" style="font-size:0.7em; color:var(--green); margin-top:10px; font-weight:bold;">Recebe: 0.00 INC</div>
+            <button class="btn-action" style="background:var(--green);" onclick="executeBuy()">AUTORIZAR DEPÓSITO BANCÁRIO</button>
+        </div>
     </div>
 
     <script>
-        function tab(p, e) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(p).classList.add('active');
-            e.classList.add('active');
+        let balance = 0.00;
+        let govBalance = 0.00;
+
+        function login() {
+            const addr = "INC_8x" + Math.random().toString(16).slice(2, 14).toUpperCase();
+            document.getElementById('client-addr').innerText = addr;
+            document.getElementById('scr-login').classList.remove('active');
+            document.getElementById('scr-client').classList.add('active');
+            alert("Conta criada. Bem-vindo à Soberania Digital.");
         }
 
-        function createAccount() {
-            const key = "LATTICE_PRI_" + Array.from({length: 48}, () => Math.floor(Math.random() * 16).toString(16)).join("").toUpperCase();
-            const addr = "INC_8x" + Math.random().toString(16).slice(2, 14).toUpperCase();
-            document.getElementById('priv').innerText = key;
-            document.getElementById('addr').innerText = addr;
-            document.getElementById('key-section').style.display = 'block';
-            alert("Identidade Gerada com Sucesso!");
+        function showBuy() {
+            document.getElementById('scr-client').classList.remove('active');
+            document.getElementById('scr-buy').classList.add('active');
+        }
+
+        function back() {
+            document.getElementById('scr-buy').classList.remove('active');
+            document.getElementById('scr-client').classList.add('active');
         }
 
         function calc() {
-            let v = document.getElementById('amt').value || 0;
-            document.getElementById('prev').innerText = "Recebe (98%): " + (v * 5.26 * 0.98).toFixed(2) + " INC";
-            document.getElementById('res-gov').innerText = (v * 5.26 * 0.02).toFixed(2) + " INC";
+            let v = document.getElementById('buy-val').value || 0;
+            document.getElementById('preview').innerText = "Recebe (98%): " + (v * 5.26 * 0.98).toFixed(2) + " INC";
         }
 
-        function telemetry() {
-            document.getElementById('lat').innerText = (Math.random() * (22 - 14) + 14).toFixed(0) + "ms";
-            document.getElementById('tps').innerText = (Math.random() * (410 - 390) + 390).toFixed(1);
+        function executeBuy() {
+            let v = document.getElementById('buy-val').value;
+            if(!v) return;
+            balance += (v * 5.26 * 0.98);
+            govBalance += (v * 5.26 * 0.02);
+            document.getElementById('client-bal').innerText = balance.toLocaleString() + " INC";
+            document.getElementById('gov-val').innerText = govBalance.toLocaleString() + " INC";
+            alert("Capital Injetado com Sucesso!");
+            back();
         }
 
-        setInterval(telemetry, 3000);
-        document.getElementById('qr-img').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ACCOUNT_GEN_" + Math.random();
+        document.getElementById('qr-log').src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=LOGIN_" + Math.random();
     </script>
 </body>
 </html>
