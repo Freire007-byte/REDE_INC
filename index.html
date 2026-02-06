@@ -8,30 +8,41 @@
         :root { --bg: #0d0d0d; --card-bg: #141414; --blue: #00aaff; --text: #e0e0e0; --dim: #555; }
         body { background: var(--bg); color: var(--text); font-family: "Segoe UI", Tahoma, sans-serif; margin: 0; padding: 20px; display: grid; grid-template-columns: 250px 1fr; gap: 20px; }
         
-        /* Barra Lateral de Status */
         .sidebar { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid #222; height: calc(100vh - 80px); }
         .logo { font-size: 1.8em; font-weight: bold; color: #fff; margin-bottom: 30px; border-bottom: 2px solid var(--blue); padding-bottom: 10px; }
         .status-item { font-size: 0.7em; margin-bottom: 15px; color: var(--dim); letter-spacing: 1px; }
         .status-item b { color: var(--blue); display: block; font-size: 1.1em; margin-top: 3px; }
 
-        /* Grid de Conteúdo Principal */
         .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .card { background: var(--card-bg); border-radius: 12px; border: 1px solid #222; padding: 20px; position: relative; }
         .card-title { font-size: 0.85em; font-weight: bold; color: #888; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Valores e Gráficos Simulados */
         .big-value { font-size: 2.2em; font-weight: bold; color: var(--blue); margin-bottom: 10px; }
-        .chart-placeholder { width: 100%; height: 100px; background: linear-gradient(90deg, transparent 0%, rgba(0,170,255,0.1) 50%, transparent 100%); border-bottom: 1px solid #333; position: relative; overflow: hidden; }
-        .chart-placeholder::after { content: ""; position: absolute; bottom: 10px; left: 0; width: 100%; height: 40px; border-top: 2px solid var(--blue); opacity: 0.4; }
+        .chart-placeholder { width: 100%; height: 100px; background: linear-gradient(90deg, transparent 0%, rgba(0,170,255,0.1) 50%, transparent 100%); border-bottom: 1px solid #333; position: relative; }
 
-        /* Tabela de Transferência */
         table { width: 100%; border-collapse: collapse; font-size: 0.7em; margin-top: 10px; }
         th { text-align: left; color: var(--dim); padding: 8px; border-bottom: 1px solid #222; }
         td { padding: 8px; border-bottom: 1px solid #1a1a1a; }
         .tag-status { color: var(--blue); font-weight: bold; }
 
-        /* Protocolo/Manifesto */
-        .btn-protocol { background: var(--blue); color: #000; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; font-size: 0.8em; }
+        .btn-protocol { background: var(--blue); color: #000; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; font-size: 0.8em; transition: 0.3s; }
+        .btn-protocol:hover { background: #fff; }
+
+        /* MODAL DO PROTOCOLO */
+        #protocolModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        .protocol-content {
+            background: #111; border: 1px solid var(--blue); padding: 40px; border-radius: 8px;
+            max-width: 600px; width: 90%; color: #fff; font-family: "Courier New", monospace;
+            box-shadow: 0 0 50px rgba(0,170,255,0.2);
+        }
+        .protocol-header { color: var(--blue); border-bottom: 1px solid #333; margin-bottom: 20px; padding-bottom: 10px; font-size: 1.2em; }
+        .protocol-body { font-size: 0.85em; line-height: 1.6; color: #ccc; }
+        .formula-box { background: #000; padding: 15px; border-radius: 4px; border-left: 3px solid var(--blue); margin: 20px 0; color: #39ff14; }
+        .close-btn { background: none; border: 1px solid #444; color: #888; padding: 10px 20px; cursor: pointer; margin-top: 20px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -42,10 +53,7 @@
         <div class="status-item">LATÊNCIA REDE<b id="lat">0ms</b></div>
         <div class="status-item">PULSOS ATIVOS<b id="vis">0</b></div>
         <div class="status-item">ASSINATURA<b>VALIDADA</b></div>
-        <button class="btn-protocol" onclick="alert(\"PROTOCOLO SOBERANO ATIVO
-
-Matemática: f(x) = ∑ aᵢ xᵢ mod(q)
-Segurança: Lattice 2500 bytes\")">ABRIR PROTOCOLO</button>
+        <button class="btn-protocol" onclick="document.getElementById(\"protocolModal\").style.display=\"flex\"">ABRIR PROTOCOLO</button>
     </div>
 
     <div class="main-content">
@@ -53,14 +61,12 @@ Segurança: Lattice 2500 bytes\")">ABRIR PROTOCOLO</button>
             <div class="card-title">Ativos Totais da Rede <span>●</span></div>
             <div class="big-value" id="saldo">0.00 INC</div>
             <div class="chart-placeholder"></div>
-            <div style="font-size:0.6em; color:#444; margin-top:10px;">FLUXO TEMPORAL DE MINERAÇÃO</div>
         </div>
 
         <div class="card">
             <div class="card-title">Estabilidade Quântica <span>●</span></div>
             <div class="big-value">99.99<span style="font-size:0.4em">%</span></div>
             <div class="chart-placeholder" style="filter: hue-rotate(90deg);"></div>
-            <div style="font-size:0.6em; color:#444; margin-top:10px;">INTEGRIDADE DO COFRE ATÔMICO</div>
         </div>
 
         <div class="card">
@@ -85,6 +91,27 @@ Segurança: Lattice 2500 bytes\")">ABRIR PROTOCOLO</button>
         </div>
     </div>
 
+    <div id="protocolModal">
+        <div class="protocol-content">
+            <div class="protocol-header">MANIFESTO INC.OS // SOBERANIA DIGITAL</div>
+            <div class="protocol-body">
+                Esta é a soberania digital da Nova Era Web 4.0. O controle do tempo e dos ativos é executado através desta interface blindada.
+                <br><br>
+                A matemática protege a liberdade onde as leis falham. O sistema utiliza criptografia baseada em grades (Lattice) para garantir imunidade quântica.
+                
+                <div class="formula-box">
+                    f(x) = ∑ aᵢ xᵢ mod(q) | n=2500
+                </div>
+                
+                <b>VEREDITO TÉCNICO:</b><br>
+                • Resiliência: Baseado no Problema do Vetor Mais Curto (SVP).<br>
+                • Entropia: 2.500 bytes de pureza matemática.<br>
+                • Status: Incorruptível.
+            </div>
+            <button class="close-btn" onclick="document.getElementById(\"protocolModal\").style.display=\"none\"">FECHAR PROTOCOLO</button>
+        </div>
+    </div>
+
     <script>
         async function update() {
             const t0 = performance.now();
@@ -97,6 +124,7 @@ Segurança: Lattice 2500 bytes\")">ABRIR PROTOCOLO</button>
             } catch(e) {}
         }
         setInterval(update, 2000);
+        update();
     </script>
 </body>
 </html>
