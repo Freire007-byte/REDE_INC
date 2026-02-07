@@ -3,127 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.NEXUS | ELITE_V64</title>
+    <title>INC.NEXUS | SOL_NETWORK_V65</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --bg: #050505; --accent: #00aaff; --green: #39ff14; --glass: rgba(20, 20, 20, 0.7); }
-        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #fff; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
+        :root { --bg: #000; --accent: #9945FF; --green: #14F195; --glass: rgba(20, 20, 20, 0.8); }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #fff; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        /* BACKGROUND GLOW */
-        .bg-glow { position: fixed; top: -50px; left: -50px; width: 200px; height: 200px; background: var(--accent); filter: blur(120px); opacity: 0.15; z-index: -1; }
+        header { padding: 20px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 900; letter-spacing: -1px; color: var(--green); }
 
-        header { padding: 30px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 900; font-size: 1.2rem; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
+        #viewport { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
+        .tab-content { display: none; }
+        .active-tab { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .container { padding: 0 20px; height: calc(100vh - 150px); overflow-y: auto; }
+        .card { background: var(--glass); border: 1px solid #222; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .label { font-size: 0.6rem; color: #666; text-transform: uppercase; margin-bottom: 8px; }
+        .val { font-size: 2rem; font-weight: 800; }
 
-        .glass-card { 
-            background: var(--glass); border: 1px solid rgba(255,255,255,0.05); 
-            backdrop-filter: blur(10px); border-radius: 24px; padding: 25px; margin-bottom: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-        }
+        /* Estilo Tabela Mercado */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        td { padding: 15px 0; border-bottom: 1px solid #111; font-size: 0.9rem; }
+        .btn-buy { background: var(--accent); color: #fff; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
 
-        .label { font-size: 0.65rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
-        .balance { font-size: 2.4rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 5px; }
-        .balance span { font-size: 1rem; color: var(--green); margin-left: 5px; }
-
-        #qrcode { 
-            background: #fff; padding: 12px; border-radius: 20px; display: inline-block; 
-            margin: 20px 0; border: 5px solid rgba(0, 170, 255, 0.3);
-        }
-        #qrcode img { width: 140px; }
-
-        .wallet-id { font-family: "SF Mono", monospace; font-size: 0.6rem; color: var(--accent); background: rgba(0,170,255,0.1); padding: 8px 12px; border-radius: 10px; display: inline-block; }
-
-        .btn-modern {
-            width: 100%; padding: 20px; border-radius: 18px; border: none;
-            background: linear-gradient(135deg, var(--accent), #0055ff);
-            color: #fff; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0, 170, 255, 0.2); transition: 0.3s;
-        }
-        .btn-modern:active { transform: scale(0.98); opacity: 0.9; }
-
-        .stats { display: flex; gap: 10px; margin-top: 20px; }
-        .mini-card { flex: 1; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.05); }
-        .stat-val { font-size: 0.9rem; font-weight: 700; margin-top: 4px; }
-
-        nav { position: fixed; bottom: 0; width: 100%; padding: 20px; display: flex; justify-content: space-around; background: rgba(5,5,5,0.8); backdrop-filter: blur(20px); }
-        .nav-icon { color: #444; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; text-decoration: none; }
-        .nav-icon.active { color: var(--accent); }
+        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #000; border-top: 1px solid #111; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { flex: 1; padding: 20px; text-align: center; color: #444; font-size: 0.7rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .nav-item.active { color: var(--accent); border-top: 2px solid var(--accent); }
+        
+        #qrcode { background: #fff; padding: 10px; border-radius: 10px; display: inline-block; margin-top: 15px; }
     </style>
 </head>
 <body>
-    <div class="bg-glow"></div>
-    
+
     <header>
-        <div class="logo">INC<span>.NEXUS</span></div>
-        <div id="net-pulse" style="width: 10px; height: 10px; background: var(--green); border-radius: 50%; box-shadow: 0 0 10px var(--green);"></div>
+        <div class="logo">INC // NETWORK</div>
+        <div id="status" style="font-size: 0.5rem; color: var(--green);">● MAINNET_BETA</div>
     </header>
 
-    <div class="container">
-        <div class="glass-card">
-            <div class="label">Soberania Disponível</div>
-            <div class="balance" id="user-bal">0.00<span>INC</span></div>
-            <div class="wallet-id" id="wallet-display">---</div>
-            <div style="margin-top:20px;">
-                <button class="btn-modern" onclick="faucet()">REIVINDICAR ACESSO (+10 INC)</button>
+    <div id="viewport">
+        <div id="tab-user" class="tab-content active-tab">
+            <div class="card">
+                <div class="label">Sua Conta</div>
+                <div id="wallet-name" style="font-size: 0.8rem; font-weight: bold; color: var(--accent);">---</div>
+                <div class="val" id="user-bal" style="margin-top:10px;">0.00 INC</div>
+                <button class="btn-buy" onclick="faucet()">REIVINDICAR TOKENS (+10)</button>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="label">Seu QR Code de Recebimento</div>
+                <div id="qrcode"></div>
             </div>
         </div>
 
-        <div class="glass-card" style="text-align: center;">
-            <div class="label">Seu Endereço Quântico</div>
-            <div id="qrcode"></div>
-            <div style="font-size: 0.6rem; color: #555;">Escaneie para receber transferências PQC</div>
-        </div>
-
-        <div class="stats">
-            <div class="mini-card">
-                <div class="label">Tesouraria</div>
-                <div class="stat-val" id="treasury-val">$ 0.00</div>
+        <div id="tab-market" class="tab-content">
+            <div class="card">
+                <div class="label">Tesouraria Global</div>
+                <div class="val" id="treasury-val" style="color: var(--green);">$ 0.00</div>
             </div>
-            <div class="mini-card">
-                <div class="label">Ledger</div>
-                <div class="stat-val" id="block-val">#0</div>
+            <div class="card">
+                <div class="label">Ativos Ativos</div>
+                <table>
+                    <tr><td><b>INC Token</b></td><td style="text-align:right;">$ 5.29</td><td style="color:var(--green); text-align:right;">+0.5%</td></tr>
+                    <tr><td><b>Solana (SOL)</b></td><td style="text-align:right;">$ 142.10</td><td style="color:var(--green); text-align:right;">+2.1%</td></tr>
+                </table>
             </div>
         </div>
     </div>
 
     <nav>
-        <a href="#" class="nav-icon active">Assets</a>
-        <a href="#" class="nav-icon">Vault</a>
-        <a href="#" class="nav-item" style="color:#555" onclick="location.reload()">Sync</a>
+        <div class="nav-item active" onclick="switchTab('tab-user', this)">Carteira</div>
+        <div class="nav-item" onclick="switchTab('tab-market', this)">Mercado</div>
+        <div class="nav-item" onclick="location.reload()">Sync</div>
     </nav>
 
     <script>
-        let walletID = localStorage.getItem('inc_wallet_id') || "INC_" + Math.random().toString(36).substr(2, 9).toUpperCase();
+        let walletID = localStorage.getItem('inc_wallet_id') || "USER_" + Math.random().toString(36).substr(2, 6).toUpperCase();
         localStorage.setItem('inc_wallet_id', walletID);
-        document.getElementById('wallet-display').innerText = walletID;
+
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active-tab');
+            el.classList.add('active');
+            if(id === 'tab-user') renderQR();
+        }
 
         async function sync() {
             try {
                 const res = await fetch(`/status?wallet_id=${walletID}`);
                 const d = await res.json();
-                document.getElementById('user-bal').innerHTML = d.user_balance.toFixed(2) + "<span>INC</span>";
-                document.getElementById('treasury-val').innerText = "$" + (d.treasury / 1e6).toFixed(1) + "M";
-                document.getElementById('block-val').innerText = "#" + d.blocos;
-            } catch (e) { console.error("Sync offline"); }
+                document.getElementById('user-bal').innerText = d.user_balance.toFixed(2) + " INC";
+                document.getElementById('treasury-val').innerText = "$ " + (d.treasury / 1e6).toFixed(1) + "M";
+                document.getElementById('wallet-name').innerText = walletID;
+            } catch (e) { console.log("Sync..."); }
+        }
+
+        function renderQR() {
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), { text: walletID, width: 150, height: 150 });
         }
 
         async function faucet() {
-            const res = await fetch(`/api/faucet?wallet_id=${walletID}`, {method: 'POST'});
-            if(res.ok) sync();
+            await fetch(`/api/faucet?wallet_id=${walletID}`, {method: 'POST'});
+            sync();
         }
 
-        new QRCode(document.getElementById("qrcode"), { 
-            text: walletID, width: 140, height: 140, 
-            colorDark: "#000", colorLight: "#fff", 
-            correctLevel: QRCode.CorrectLevel.H 
-        });
-
-        setInterval(sync, 5000);
-        window.onload = sync;
+        setInterval(sync, 4000);
+        window.onload = () => { sync(); renderQR(); };
     </script>
 </body>
 </html>
