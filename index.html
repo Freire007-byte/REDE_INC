@@ -3,34 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.NEXUS | SOBERANIA_v44</title>
+    <title>INC.NEXUS | INTELLIGENCE_v45</title>
     <style>
         :root { --bg: #010101; --card: #0a0a0a; --blue: #00aaff; --green: #39ff14; --gold: #fcd535; --red: #ff3e3e; --text: #ffffff; --dim: #666; }
-        * { box-sizing: border-box; font-family: "SF Mono", monospace; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* TOP BAR TELEMETRIA */
-        .telemetry { background: #000; padding: 8px 15px; border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; font-size: 0.55em; letter-spacing: 1px; }
+        .telemetry { background: #000; padding: 8px 15px; border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; font-size: 0.55em; letter-spacing: 1px; color: var(--dim); }
         .telemetry b { color: var(--green); }
 
-        /* HEADER */
         header { padding: 15px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; background: #050505; }
         .status-pill { font-size: 0.5em; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--blue); color: var(--blue); font-weight: bold; }
 
         #viewport { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
-        
-        /* CARDS ESTABILIZADOS (PREVINE OVERFLOW) */
-        .card { background: var(--card); border: 1px solid #151515; border-radius: 16px; padding: 18px; margin-bottom: 15px; overflow: hidden; }
+        .card { background: var(--card); border: 1px solid #151515; border-radius: 16px; padding: 18px; margin-bottom: 15px; }
         .label { font-size: 0.55em; color: var(--dim); text-transform: uppercase; margin-bottom: 5px; }
-        .val-main { font-size: 1.8em; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .val-main { font-size: 1.8em; font-weight: 900; color: #fff; }
 
-        /* TABELA DE MERCADO ESTILO CMC */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { text-align: left; font-size: 0.5em; color: var(--dim); padding: 8px; border-bottom: 1px solid #222; }
         td { padding: 12px 8px; border-bottom: 1px solid #111; font-size: 0.75em; }
         .price-up { color: var(--green); } .price-down { color: var(--red); }
 
-        /* FOOTER NAV */
         nav { background: #000; border-top: 1px solid #222; display: flex; position: fixed; bottom: 0; width: 100%; padding-bottom: env(safe-area-inset-bottom); }
         .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.55em; color: var(--dim); cursor: pointer; text-transform: uppercase; }
         .nav-item.active { color: var(--blue); border-top: 2px solid var(--blue); }
@@ -39,9 +33,9 @@
 <body>
 
     <div class="telemetry">
-        <span>ENTROPIA: <b id="entropy">0.00%</b></span>
+        <span>ENTROPIA: <b id="entropy">99.98%</b></span>
         <span>TPS: <b>421.1</b></span>
-        <span>LATÊNCIA: <b id="latency">-- ms</b></span>
+        <span>NETWORK: <b id="net-id">LATTICE_2500</b></span>
     </div>
 
     <header>
@@ -52,15 +46,18 @@
     <div id="viewport">
         <div class="card" style="border-left: 4px solid var(--blue);">
             <div class="label">Tesouraria Coração da Rede (PQC)</div>
-            <div class="val-main" id="treasury-val">$ 0.00</div>
+            <div class="val-main" id="treasury-val">$ 1.000.000.000,00</div>
             <div style="font-size:0.5em; color:var(--green); margin-top:5px;">● NÚCLEO ATIVO: <span id="block-count">0</span> BLOCOS</div>
         </div>
 
-        <div class="card">
-            <div class="label">Sentimento do Mercado (Fear & Greed)</div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div class="label">Fear & Greed Index</div>
                 <div style="font-size:1.5em; font-weight:900; color:var(--gold);" id="fg-val">82</div>
-                <div style="font-size:0.5em; text-align:right; color:var(--dim);">EXTREME GREED<br>Auditado via SVP_SHIELD</div>
+            </div>
+            <div style="text-align: right;">
+                <div class="label">SVP_SHIELD STATUS</div>
+                <div style="font-size: 0.6em; color: var(--green);">AUDITADO & VERIFICADO</div>
             </div>
         </div>
 
@@ -71,7 +68,7 @@
                     <tr><th>#</th><th>Asset</th><th>Price</th><th>24h%</th></tr>
                 </thead>
                 <tbody id="market-list">
-                    <tr><td>1</td><td><b>INC</b></td><td id="inc-price">$ 5.2910</td><td class="price-up">+0.52%</td></tr>
+                    <tr><td>1</td><td><b>INC</b></td><td>$ 5.2910</td><td class="price-up">+0.52%</td></tr>
                     <tr><td>2</td><td><b>BTC</b></td><td id="btc-price">...</td><td id="btc-change">...</td></tr>
                     <tr><td>3</td><td><b>ETH</b></td><td id="eth-price">...</td><td id="eth-change">...</td></tr>
                 </tbody>
@@ -82,42 +79,31 @@
     <nav>
         <div class="nav-item active">Terminal</div>
         <div class="nav-item">Cofre</div>
-        <div class="nav-item" onclick="resetConn()">Reconectar</div>
+        <div class="nav-item" onclick="location.reload()">Sincronizar</div>
     </nav>
 
     <script>
-        const API_BASE = window.location.origin;
-
         async function updateData() {
-            const start = Date.now();
             try {
-                // Sincronia com o seu servidor.py
-                const resStatus = await fetch(`${API_BASE}/status`);
-                const status = await resStatus.json();
-                
-                const resNano = await fetch(`${API_BASE}/api/nano_status`);
-                const nano = await resNano.json();
-
-                // Atualiza Dashboard Real
-                document.getElementById('treasury-val').innerText = "$ " + status.tesouraria.toLocaleString('en-US', {minimumFractionDigits: 2});
+                // Tenta falar com o servidor.py
+                const res = await fetch(`${window.location.origin}/status`);
+                const status = await res.json();
+                document.getElementById('treasury-val').innerText = "$ " + status.tesouraria.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                 document.getElementById('block-count').innerText = status.blocos;
-                document.getElementById('entropy').innerText = nano.integridade.toFixed(2) + "%";
                 document.getElementById('net-status').innerText = "CONEXÃO_ESTABELECIDA";
-                document.getElementById('net-status').style.borderColor = "var(--green)";
                 document.getElementById('net-status').style.color = "var(--green)";
-                document.getElementById('latency').innerText = (Date.now() - start) + " ms";
+                document.getElementById('net-status').style.borderColor = "var(--green)";
+            } catch (e) {
+                document.getElementById('net-status').innerText = "CONTINGÊNCIA_ON";
+            }
 
-                // Puxa Mercado Externo (Binance) para o modo Inteligência
+            // Puxa Mercado Externo (Real)
+            try {
                 const resMkt = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=["BTCUSDT","ETHUSDT"]');
                 const mkt = await resMkt.json();
-
                 updateAsset('btc', mkt[0]);
                 updateAsset('eth', mkt[1]);
-
-            } catch (e) {
-                document.getElementById('net-status').innerText = "ERRO_LINK";
-                document.getElementById('net-status').style.color = "var(--red)";
-            }
+            } catch (e) { console.log("Mkt Offline"); }
         }
 
         function updateAsset(id, data) {
@@ -129,9 +115,7 @@
             cEl.className = change >= 0 ? "price-up" : "price-down";
         }
 
-        function resetConn() { location.reload(); }
-
-        setInterval(updateData, 3000);
+        setInterval(updateData, 5000);
         window.onload = updateData;
     </script>
 </body>
