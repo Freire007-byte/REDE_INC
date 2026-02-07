@@ -3,44 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC.NEXUS | REAL_WALLET_V62</title>
+    <title>INC.NEXUS | STABLE_V63</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --bg: #000; --blue: #00aaff; --green: #39ff14; --card: #0d0d0d; --text: #fff; --dim: #555; }
+        :root { --bg: #000; --blue: #00aaff; --green: #39ff14; --card: #0d0d0d; --text: #fff; }
         * { box-sizing: border-box; font-family: "SF Mono", monospace; }
-        body { background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         header { padding: 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; }
-        #viewport { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
-        .page { display: none; } .active-page { display: block; }
-        .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid #1a1a1a; }
+        .card { background: var(--card); border-radius: 16px; padding: 20px; margin: 15px; border: 1px solid #1a1a1a; text-align: center; }
         .val { font-size: 2em; font-weight: 900; color: var(--green); }
-        #qrcode { background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin-top: 15px; border: 4px solid var(--blue); }
-        nav { background: #000; border-top: 1px solid #222; display: flex; position: fixed; bottom: 0; width: 100%; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { flex: 1; padding: 20px; text-align: center; font-size: 0.6em; color: var(--dim); font-weight: bold; }
+        #qrcode { background: #fff; padding: 10px; border-radius: 12px; display: inline-block; margin: 15px 0; border: 4px solid var(--blue); }
+        .btn { width: 100%; padding: 18px; border-radius: 12px; border: none; font-weight: bold; background: var(--blue); color: #000; cursor: pointer; }
+        nav { position: fixed; bottom: 0; width: 100%; background: #000; border-top: 1px solid #222; display: flex; }
+        .nav-item { flex: 1; padding: 20px; text-align: center; font-size: 0.7em; color: #555; font-weight: bold; }
         .active { color: var(--blue); border-top: 2px solid var(--blue); }
-        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: bold; background: var(--blue); color: #000; margin-top: 10px; }
     </style>
 </head>
 <body>
     <header>
         <div style="font-weight:900; color:var(--blue);">INC.NEXUS</div>
-        <div id="net-status" style="font-size:0.5em; color:var(--green);">SYNCING</div>
+        <div id="net-status" style="font-size:0.5em; color:var(--green);">PQC_READY</div>
     </header>
 
-    <div id="viewport">
-        <div id="pg-wallet" class="page active-page">
-            <div class="card" style="text-align: center;">
-                <div style="font-size: 0.6em; color: var(--dim);">SALDO DA CARTEIRA</div>
-                <div class="val" id="user-balance">0.00 INC</div>
-                <div id="qrcode"></div>
-                <div id="wallet-id" style="font-size: 0.5em; color: var(--blue); margin-top: 15px; font-family: monospace;"></div>
-                <button class="btn" onclick="faucet()">ATIVAR CARTEIRA (+10 INC)</button>
-            </div>
-            <div class="card">
-                <div style="font-size: 0.6em; color: var(--dim);">TESOURARIA MESTRE</div>
-                <div style="font-size: 1.2em; font-weight: bold;" id="treasury-val">$ 0.00</div>
-            </div>
-        </div>
+    <div class="card">
+        <div style="font-size: 0.6em; color: #555;">SALDO CARTEIRA</div>
+        <div class="val" id="user-bal">0.00 INC</div>
+        <div id="qrcode"></div>
+        <div id="wallet-id" style="font-size: 0.5em; color: var(--blue); font-family: monospace; margin-top: 10px;"></div>
+        <button class="btn" onclick="faucet()">ATIVAR CARTEIRA (+10 INC)</button>
+    </div>
+
+    <div class="card">
+        <div style="font-size: 0.6em; color: #555;">TESOURARIA GLOBAL</div>
+        <div style="font-size: 1.2em; font-weight: bold;" id="treasury-val">$ 0.00</div>
     </div>
 
     <script>
@@ -51,25 +46,20 @@
             try {
                 const res = await fetch(`/status?wallet_id=${walletID}`);
                 const d = await res.json();
-                document.getElementById('user-balance').innerText = d.user_balance.toFixed(2) + " INC";
+                document.getElementById('user-bal').innerText = d.user_balance.toFixed(2) + " INC";
                 document.getElementById('treasury-val').innerText = "$ " + d.treasury.toLocaleString('pt-BR');
                 document.getElementById('wallet-id').innerText = walletID;
-                document.getElementById('net-status').innerText = "ONLINE";
-            } catch (e) { document.getElementById('net-status').innerText = "OFFLINE"; }
-        }
-
-        function renderQR() {
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), { text: walletID, width: 150, height: 150 });
+            } catch (e) { console.error("Sync Error"); }
         }
 
         async function faucet() {
-            await fetch(`/api/faucet?wallet_id=${walletID}`, {method: 'POST'});
-            sync();
+            const res = await fetch(`/api/faucet?wallet_id=${walletID}`, {method: 'POST'});
+            if(res.ok) sync();
         }
 
-        setInterval(sync, 4000);
-        window.onload = () => { sync(); renderQR(); };
+        new QRCode(document.getElementById("qrcode"), { text: walletID, width: 150, height: 150 });
+        setInterval(sync, 5000);
+        window.onload = sync;
     </script>
 </body>
 </html>
