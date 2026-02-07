@@ -3,138 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INC | MARKET_INTELLIGENCE</title>
+    <title>INC.NEXUS | QUANTUM_CORE_v43</title>
     <style>
-        :root { --bg: #030303; --card: #0d0d0d; --blue: #00aaff; --green: #39ff14; --gold: #fcd535; --red: #ff3e3e; --text: #ffffff; --dim: #848e9c; }
-        * { box-sizing: border-box; font-family: "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #020202; --card: #080808; --blue: #00aaff; --green: #39ff14; --gold: #fcd535; --text: #ffffff; --dim: #555; }
+        * { box-sizing: border-box; font-family: "SF Mono", "Fira Code", monospace; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* HEADER PREMIUM */
-        header { background: #000; padding: 15px 20px; border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center; }
-        .stats-bar { display: flex; background: #080808; padding: 10px 15px; gap: 20px; border-bottom: 1px solid #111; overflow-x: auto; white-space: nowrap; font-size: 0.6em; }
-        .stats-bar b { color: var(--blue); }
+        /* BARRA DE INTEGRIDADE (VEM DO SERVIDOR) */
+        .integrity-bar { background: #000; padding: 10px 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; font-size: 0.55em; letter-spacing: 1px; }
+        .integrity-bar b { color: var(--green); text-shadow: 0 0 5px var(--green); }
 
-        /* FEAR & GREED METER */
-        .meter-container { background: var(--card); border: 1px solid #1a1a1a; border-radius: 12px; padding: 15px; margin: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .meter-box { text-align: center; flex: 1; }
-        .meter-val { font-size: 1.5em; font-weight: 900; color: var(--green); }
-        .meter-label { font-size: 0.5em; color: var(--dim); text-transform: uppercase; }
+        header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #111; }
+        
+        #viewport { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
+        .card { background: var(--card); border: 1px solid #151515; border-radius: 12px; padding: 20px; margin-bottom: 15px; position: relative; }
+        .label { font-size: 0.5em; color: var(--dim); text-transform: uppercase; margin-bottom: 8px; }
+        
+        .val-main { font-size: 2.2em; font-weight: 900; color: var(--text); }
+        .status-tag { font-size: 0.5em; background: rgba(0,170,255,0.1); color: var(--blue); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--blue); }
 
-        #viewport { flex: 1; overflow-y: auto; padding: 0 15px 100px 15px; }
-
-        /* TABELA CMC STYLE */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; font-size: 0.55em; color: var(--dim); padding: 10px 5px; text-transform: uppercase; border-bottom: 1px solid #111; }
-        td { padding: 15px 5px; border-bottom: 1px solid #0d0d0d; font-size: 0.85em; }
-        .rank { font-size: 0.6em; color: var(--dim); width: 25px; }
-        .coin-info { display: flex; align-items: center; gap: 8px; }
-        .coin-icon { width: 24px; height: 24px; border-radius: 50%; background: #111; display: flex; align-items: center; justify-content: center; font-size: 0.7em; font-weight: bold; border: 1px solid #222; }
-        .change-up { color: var(--green); font-size: 0.7em; }
-        .change-down { color: var(--red); font-size: 0.7em; }
-
-        /* MINI CHART SIMULATION */
-        .sparkline { width: 50px; height: 20px; stroke: var(--green); stroke-width: 2; fill: none; }
+        /* TABELA DE BLOCOS */
+        .block-info { display: flex; justify-content: space-between; font-size: 0.7em; padding: 8px 0; border-bottom: 1px solid #0d0d0d; }
 
         nav { background: #000; border-top: 1px solid #222; display: flex; position: fixed; bottom: 0; width: 100%; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { flex: 1; padding: 15px; text-align: center; font-size: 0.55em; color: var(--dim); cursor: pointer; text-transform: uppercase; }
-        .nav-item.active { color: var(--blue); }
+        .nav-item { flex: 1; padding: 18px; text-align: center; font-size: 0.6em; color: var(--dim); cursor: pointer; }
+        .nav-item.active { color: var(--blue); border-top: 2px solid var(--blue); }
     </style>
 </head>
 <body>
 
-    <div class="stats-bar">
-        <span>Market Cap: <b>$52.6M</b></span>
-        <span>INC20: <b style="color:var(--green)">+12.4%</b></span>
-        <span>Lattice Index: <b>2500_BITS</b></span>
+    <div class="integrity-bar">
+        <span>NUCLEO_ENTROPIA: <b id="entropy-val">0.00%</b></span>
+        <span>STATUS: <b>PÓS-QUÂNTICO_ATIVO</b></span>
     </div>
 
     <header>
-        <div style="font-weight:900; font-size:1.2em;">INC<span style="color:var(--blue)">.MARKETS</span></div>
-        <div style="font-size:0.5em; border:1px solid var(--blue); padding:3px 8px; border-radius:15px; color:var(--blue);">PREMIUM_AI</div>
+        <div style="font-weight:900; font-size:1.1em; color:var(--blue);">INC<span style="color:#fff">.NEXUS</span></div>
+        <div class="status-tag" id="net-state">SINCRONIZANDO...</div>
     </header>
 
-    <div class="meter-container">
-        <div class="meter-box">
-            <div class="meter-label">Fear & Greed</div>
-            <div class="meter-val" id="fg-val">82</div>
-            <div style="font-size:0.4em; color:var(--green)">EXTREME GREED</div>
-        </div>
-        <div style="width:1px; height:30px; background:#222;"></div>
-        <div class="meter-box">
-            <div class="meter-label">Audit Status</div>
-            <div class="meter-val" style="color:var(--blue); font-size:1.1em;">VERIFIED</div>
-            <div style="font-size:0.4em; color:var(--dim)">BY SVP_SHIELD</div>
-        </div>
-    </div>
-
     <div id="viewport">
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Moeda</th>
-                    <th>Preço</th>
-                    <th>24h %</th>
-                    <th>Gráfico</th>
-                </tr>
-            </thead>
-            <tbody id="market-body">
-                <tr>
-                    <td class="rank">1</td>
-                    <td>
-                        <div class="coin-info">
-                            <div class="coin-icon" style="color:var(--blue); border-color:var(--blue);">I</div>
-                            <div><b>INC</b><br><span style="font-size:0.6em; color:var(--dim)">Rede INC</span></div>
-                        </div>
-                    </td>
-                    <td id="price-inc">$ 5.2910</td>
-                    <td class="change-up">+0.52%</td>
-                    <td><svg class="sparkline"><polyline points="0,20 10,15 20,18 30,10 40,12 50,5"></polyline></svg></td>
-                </tr>
-                <tr>
-                    <td class="rank">2</td>
-                    <td>
-                        <div class="coin-info">
-                            <div class="coin-icon" style="color:var(--gold);">₿</div>
-                            <div><b>BTC</b><br><span style="font-size:0.6em; color:var(--dim)">Bitcoin</span></div>
-                        </div>
-                    </td>
-                    <td id="price-btc">...</td>
-                    <td id="change-btc" class="change-up">...</td>
-                    <td><svg class="sparkline"><polyline id="spark-btc" points="0,15 10,18 20,10 30,12 40,8 50,2"></polyline></svg></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="card">
+            <div class="label">Tesouraria (Coração da Rede)</div>
+            <div class="val-main" id="tesouraria-val">$ 0.00</div>
+            <div style="font-size:0.5em; color:var(--green); margin-top:10px;">PROVA DE SOBERANIA ATIVA</div>
+        </div>
+
+        <div class="card">
+            <div class="label">Status da Ledger (Memória PQC)</div>
+            <div class="block-info"><span>Blocos Processados:</span><b id="block-count">0</b></div>
+            <div class="block-info"><span>Segurança:</span><b style="color:var(--blue)">LATTICE_2500</b></div>
+            <div class="block-info" style="border:none;"><span>Latência:</span><b id="latency-val">-- ms</b></div>
+        </div>
+
+        <div class="card" style="border-color: var(--gold);">
+            <div class="label" style="color:var(--gold);">Sua Identidade Quântica</div>
+            <div id="user-hash" style="font-family:monospace; font-size:0.5em; color:var(--dim); word-break:break-all;">Aguardando Auth...</div>
+        </div>
     </div>
 
     <nav>
-        <div class="nav-item active">Markets</div>
-        <div class="nav-item">Portfolio</div>
-        <div class="nav-item">Alpha</div>
-        <div class="nav-item" onclick="location.reload()">Sair</div>
+        <div class="nav-item active">Terminal</div>
+        <div class="nav-item">Cofre</div>
+        <div class="nav-item" onclick="location.reload()">Sync</div>
     </nav>
 
     <script>
-        async function fetchMarket() {
-            try {
-                const res = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT');
-                const data = await res.json();
-                
-                const price = parseFloat(data.lastPrice).toLocaleString('en-US', {minimumFractionDigits: 2});
-                const change = parseFloat(data.priceChangePercent);
-                
-                document.getElementById('price-btc').innerText = "$ " + price;
-                const cEl = document.getElementById('change-btc');
-                cEl.innerText = (change >= 0 ? "+" : "") + change.toFixed(2) + "%";
-                cEl.className = change >= 0 ? "change-up" : "change-down";
+        const API = window.location.origin; // Usa a URL da Vercel automaticamente
 
-                // Atualiza o Fear & Greed baseado na variação do BTC
-                document.getElementById('fg-val').innerText = Math.floor(70 + Math.random()*15);
-            } catch (e) { console.log("Erro API"); }
+        async function syncNetwork() {
+            const start = Date.now();
+            try {
+                // Busca status geral do servidor.py
+                const resStatus = await fetch(`${API}/status`);
+                const dataStatus = await resStatus.json();
+                
+                // Busca integridade do NucleoAtomico
+                const resNano = await fetch(`${API}/api/nano_status`);
+                const dataNano = await resNano.json();
+
+                // Atualiza UI com dados REAIS do back-end
+                document.getElementById('tesouraria-val').innerText = "$ " + dataStatus.tesouraria.toLocaleString('en-US', {minimumFractionDigits: 2});
+                document.getElementById('block-count').innerText = dataStatus.blocos;
+                document.getElementById('entropy-val').innerText = dataNano.integridade.toFixed(2) + "%";
+                document.getElementById('user-hash').innerText = dataStatus.seguranca;
+                document.getElementById('net-state').innerText = "CONECTADO";
+                document.getElementById('latency-val').innerText = (Date.now() - start) + " ms";
+
+            } catch (e) {
+                document.getElementById('net-state').innerText = "ERRO_LINK";
+                document.getElementById('net-state').style.color = "red";
+            }
         }
 
-        setInterval(fetchMarket, 3000);
-        window.onload = fetchMarket;
+        // Loop de sincronia com o servidor a cada 3 segundos
+        setInterval(syncNetwork, 3000);
+        window.onload = syncNetwork;
     </script>
 </body>
 </html>
