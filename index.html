@@ -3,109 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INC.NEXUS | V74 SELF-HEALING</title>
+    <title>INC.NEXUS // DASHBOARD SOBERANO</title>
     <style>
-        :root { --bg: #000; --cyan: #00f2ff; --neon: #39ff14; --bots: #ff00ff; }
-        body { background: var(--bg); color: #fff; font-family: "SF Mono", monospace; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        
-        #canvas { position: absolute; top: 0; left: 0; z-index: 1; opacity: 0.4; }
-        
-        .terminal { position: relative; z-index: 2; background: rgba(8, 8, 8, 0.9); border: 1px solid #1a1a1a; padding: 30px; border-radius: 24px; width: 90%; max-width: 450px; backdrop-filter: blur(10px); }
-        .label { font-size: 0.5em; color: #444; text-transform: uppercase; letter-spacing: 2px; }
-        .val { font-size: 1.6em; font-weight: 900; color: var(--cyan); margin: 10px 0; }
-        .dna { font-size: 0.7em; color: var(--neon); word-break: break-all; margin: 15px 0; background: #000; padding: 10px; border-radius: 8px; border-left: 2px solid var(--neon); }
-        .bot-army { color: var(--bots); font-weight: bold; font-size: 0.9em; }
-        .status-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.5em; font-weight: bold; border: 1px solid var(--neon); color: var(--neon); margin-top: 10px; }
+        :root { --bg: #050505; --cyan: #00f2ff; --neon: #39ff14; --bots: #ff00ff; --card: #0a0a0a; }
+        body { background: var(--bg); color: #fff; font-family: "SF Mono", monospace; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .terminal { width: 95%; max-width: 450px; background: var(--card); border: 1px solid #1a1a1a; border-radius: 28px; padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); position: relative; overflow: hidden; border-top: 2px solid var(--cyan); }
+        .header { text-align: center; border-bottom: 1px solid #111; padding-bottom: 15px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: #000; padding: 15px; border-radius: 16px; border: 1px solid #111; }
+        .label { font-size: 0.5em; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .value { font-size: 0.9em; font-weight: bold; color: var(--cyan); }
+        .dna-box { background: #000; padding: 15px; border-radius: 12px; border-left: 3px solid var(--neon); margin-bottom: 20px; }
+        .dna-text { font-size: 0.7em; color: var(--neon); word-break: break-all; font-weight: bold; }
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn { padding: 15px; border-radius: 12px; border: 1px solid #222; background: transparent; color: #fff; cursor: pointer; font-family: inherit; font-size: 0.7em; transition: 0.3s; }
+        .btn-primary { border-color: var(--cyan); color: var(--cyan); font-weight: bold; width: 100%; }
+        .btn-primary:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
+        #payment-modal { display: none; background: #fff; color: #000; padding: 20px; border-radius: 20px; margin-top: 20px; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
-
-    <canvas id="canvas"></canvas>
-
-    <div class="terminal">
-        <div style="text-align:center; font-weight:900; letter-spacing:3px; margin-bottom:20px;">INC.NEXUS // WEB 4.0</div>
-        
-        <div class="label">Quantum DNA Stream (Lattice-2500)</div>
-        <div class="dna" id="dna">INITIALIZING_MESH...</div>
-
-        <div style="display:flex; justify-content:space-between; align-items:end;">
-            <div>
-                <div class="label">Lastro de Liquidez</div>
-                <div class="val" id="lastro">$ 4.937,17</div>
+    <div class="terminal" id="main-ui">
+        <div id="setup-screen">
+            <div class="header">
+                <h2 style="letter-spacing: 5px; font-size: 1em;">INC.NEXUS</h2>
+                <p style="font-size: 0.6em; color: #444;">PROTOCOLO LATTICE-2500</p>
             </div>
-            <div style="text-align:right;">
-                <div class="label">Auto-Regeneração</div>
-                <div class="bot-army" id="bots">1,000,000,000</div>
-            </div>
+            <button class="btn-primary" onclick="activateProtocol()">[ GERAR CARTEIRA SOBERANA ]</button>
         </div>
-
-        <div style="text-align:center; margin-top:20px;">
-            <div class="status-tag">STATUS: ATIVO & PROTEGIDO</div>
-            <div style="font-size: 0.5em; color: #333; margin-top: 15px;">"A matemática é a única democracia verdadeira."</div>
+        <div id="dashboard" style="display:none;">
+            <div class="header">
+                <div class="label">ID SOBERANO</div>
+                <div style="font-size: 0.7em; color: var(--cyan);" id="user-id">...</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">SALDO REDE</div>
+                    <div class="value">$ 4.937,17</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">MOEDAS INC</div>
+                    <div class="value" style="color:var(--bots)">10.00 INC</div>
+                </div>
+            </div>
+            <div class="dna-box">
+                <div class="label">Quantum DNA Stream</div>
+                <div class="dna-text" id="dna-sync">SYNC...</div>
+            </div>
+            <div class="action-grid">
+                <button class="btn" onclick="togglePay('RECEBER')">📥 RECEBER</button>
+                <button class="btn" onclick="togglePay('ENVIAR')">📤 ENVIAR</button>
+            </div>
+            <button class="btn-primary" style="margin-top:10px;" onclick="togglePay('COMPRAR')">💰 COMPRAR MOEDAS / APORTE</button>
+            <div id="payment-modal">
+                <div id="pay-header" style="font-weight:bold; font-size:0.8em; margin-bottom:10px;"></div>
+                <img id="qr-code" src="" style="width:100%; border-radius:10px;">
+                <div id="pay-data" style="font-size: 0.7em; margin-top:10px; font-weight:bold; text-align:center;"></div>
+                <button class="btn" style="width:100%; margin-top:10px; background:#000; color:#fff;" onclick="closePay()">FECHAR</button>
+            </div>
         </div>
     </div>
-
     <script>
-        // Animação da Malha de 2500 Fios
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let lines = [];
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        const CORE_DATA = { pix: "41995819894", id: "NEXUS-" + Math.random().toString(36).substring(2, 7).toUpperCase() };
+        function activateProtocol() {
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('user-id').innerText = CORE_DATA.id;
+            setInterval(() => {
+                const hash = Array.from({length: 24}, () => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
+                document.getElementById('dna-sync').innerText = hash;
+            }, 1000);
         }
-        window.onresize = resize;
-        resize();
-
-        class Thread {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
+        function togglePay(mode) {
+            const modal = document.getElementById('payment-modal');
+            const header = document.getElementById('pay-header');
+            const qr = document.getElementById('qr-code');
+            const data = document.getElementById('pay-data');
+            modal.style.display = 'block';
+            if(mode === 'RECEBER' || mode === 'COMPRAR') {
+                header.innerText = "DEPOSITAR NA REDE (PIX)";
+                qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${CORE_DATA.pix}`;
+                data.innerText = "CHAVE: " + CORE_DATA.pix;
+            } else {
+                header.innerText = "ENVIAR MOEDAS";
+                qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=INTERNAL";
+                data.innerText = "DIGITE O ID DESTINO";
             }
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
         }
-
-        for(let i=0; i<100; i++) lines.push(new Thread());
-
-        function animate() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.strokeStyle = '#00f2ff';
-            ctx.lineWidth = 0.2;
-            for(let i=0; i<lines.length; i++) {
-                lines[i].update();
-                for(let j=i+1; j<lines.length; j++) {
-                    let dist = Math.hypot(lines[i].x - lines[j].x, lines[i].y - lines[j].y);
-                    if(dist < 150) {
-                        ctx.beginPath();
-                        ctx.moveTo(lines[i].x, lines[i].y);
-                        ctx.lineTo(lines[j].x, lines[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // Sincronia de Dados
-        async function sync() {
-            try {
-                const res = await fetch(`/status?wallet_id=USER_NODE`);
-                const d = await res.json();
-                document.getElementById('dna').innerText = d.dna;
-                document.getElementById('bots').innerText = d.bots.toLocaleString();
-                document.getElementById('lastro').innerText = "$ " + d.lastro.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-            } catch(e) {}
-        }
-        setInterval(sync, 2000);
-        sync();
+        function closePay() { document.getElementById('payment-modal').style.display = 'none'; }
     </script>
 </body>
 </html>
+EOF 
