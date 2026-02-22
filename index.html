@@ -6,49 +6,35 @@
     <title>INC.NEXUS // WEB 4.0 SOBERANA</title>
     <style>
         :root { --bg: #000; --cyan: #00f2ff; --neon: #39ff14; --pink: #ff00ff; }
-        
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
             background: #000; font-family: 'SF Mono', 'Courier New', monospace;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; color: #fff;
         }
-
-        /* MALHA TRANÇADA DINÂMICA (LATTICE BACKGROUND) */
         #canvas-lattice {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; background: radial-gradient(circle at center, #001a1a 0%, #000 100%);
         }
-
-        /* CARD DE ELITE */
         .card {
             position: relative; z-index: 10;
-            width: 380px; background: rgba(5, 5, 5, 0.9);
-            border: 1px solid rgba(0, 242, 255, 0.2);
+            width: 380px; background: rgba(5, 5, 5, 0.92);
+            border: 1px solid rgba(0, 242, 255, 0.25);
             border-radius: 35px; padding: 45px 30px;
             text-align: center;
-            box-shadow: 0 0 60px rgba(0,0,0,1), 0 0 20px rgba(0, 242, 255, 0.05);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 0 60px rgba(0,0,0,1);
+            backdrop-filter: blur(12px);
         }
-
         .title { letter-spacing: 6px; font-weight: bold; font-size: 1.1em; color: var(--cyan); margin-bottom: 35px; text-shadow: 0 0 10px var(--cyan); }
-        
         .label { font-size: 0.55em; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        
         .dna-box { 
             background: #000; border: 1px solid #111; border-radius: 15px; 
             padding: 15px; margin-bottom: 35px; border-left: 3px solid var(--neon);
             text-align: left;
         }
         .dna-text { color: var(--neon); font-size: 0.7em; word-break: break-all; opacity: 0.9; font-weight: bold; line-height: 1.4; }
-
-        .lastro-section { margin-bottom: 30px; }
         .lastro-val { color: var(--cyan); font-size: 2.5em; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .lastro-val:hover { text-shadow: 0 0 20px var(--cyan); }
-
-        .regen-box { text-align: right; margin-top: -10px; }
         .regen-val { color: var(--pink); font-size: 0.9em; font-weight: bold; letter-spacing: 1px; }
-
         .status-btn {
             display: inline-block; padding: 10px 30px; border-radius: 25px;
             border: 1px solid var(--neon); color: var(--neon);
@@ -56,63 +42,45 @@
             text-transform: uppercase; letter-spacing: 2px;
             background: rgba(57, 255, 20, 0.05);
         }
-
-        .footer-quote { font-size: 0.5em; color: #333; margin-top: 30px; font-style: italic; letter-spacing: 1px; }
+        .footer-quote { font-size: 0.5em; color: #333; margin-top: 30px; font-style: italic; }
     </style>
 </head>
 <body>
-
     <canvas id="canvas-lattice"></canvas>
-
     <div class="card">
         <div class="title">INC.NEXUS // WEB 4.0</div>
-
         <div class="label">Quantum DNA Stream (Lattice-2500)</div>
-        <div class="dna-box">
-            <div class="dna-text" id="dna">INITIALIZING_PROTOCOL...</div>
-        </div>
-
-        <div class="lastro-section">
-            <div class="label">Lastro de Liquidez</div>
-            <div class="lastro-val" onclick="togglePix()">$ 4.937,17</div>
-        </div>
-
-        <div class="regen-box">
+        <div class="dna-box"><div class="dna-text" id="dna">INITIALIZING...</div></div>
+        <div class="label">Lastro de Liquidez</div>
+        <div class="lastro-val" onclick="togglePix()">$ 4.937,17</div>
+        <div style="text-align: right; margin-top: 10px;">
             <div class="label" style="font-size: 0.45em;">Auto-Regeneração</div>
             <div class="regen-val" id="regen">999 999 052</div>
         </div>
-
         <div class="status-btn">Status: Ativo & Protegido</div>
-
         <div class="footer-quote">"A matemática é a única democracia verdadeira."</div>
     </div>
-
     <script>
-        // Lógica da Malha Trançada (Background)
         const canvas = document.getElementById('canvas-lattice');
         const ctx = canvas.getContext('2d');
         let pts = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.onresize = resize;
-        resize();
-
-        for(let i=0; i<60; i++) {
+        // AUMENTO DA DENSIDADE: 150 pontos para uma malha mais pesada
+        for(let i=0; i<150; i++) {
             pts.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.5,
-                vy: (Math.random() - 0.5) * 0.5
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4
             });
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = 'rgba(0, 242, 255, 0.15)';
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = 'rgba(0, 242, 255, 0.12)'; // Malha sutil e densa
+            ctx.lineWidth = 0.4;
             for(let i=0; i<pts.length; i++) {
                 let p = pts[i];
                 p.x += p.vx; p.y += p.vy;
@@ -121,7 +89,8 @@
                 for(let j=i+1; j<pts.length; j++) {
                     let p2 = pts[j];
                     let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if(dist < 150) {
+                    // CONEXÃO AMPLIADA: as tranças alcançam distâncias maiores
+                    if(dist < 180) { 
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
@@ -133,23 +102,16 @@
         }
         draw();
 
-        // Lógica de Dados
         function updateData() {
             const hex = '0123456789ABCDEF';
             let d = '';
             for(let i=0; i<72; i++) d += hex[Math.floor(Math.random()*16)];
             document.getElementById('dna').innerText = d.match(/.{1,24}/g).join('\n');
-            
-            let r = Math.floor(Math.random()*999)+' '+Math.floor(Math.random()*999)+' '+Math.floor(Math.random()*999);
-            document.getElementById('regen').innerText = r;
+            document.getElementById('regen').innerText = Math.floor(Math.random()*999)+' '+Math.floor(Math.random()*999)+' '+Math.floor(Math.random()*999);
         }
         setInterval(updateData, 1000);
-
-        function togglePix() {
-            alert("PROTOCOLO DE LIQUIDEZ ATIVO\n\nChave PIX: 41995819894\nStatus: Canal Seguro");
-        }
+        function togglePix() { alert("Chave PIX: 41995819894"); }
     </script>
 </body>
 </html>
 EOF 
-
