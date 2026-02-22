@@ -3,96 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INC.NEXUS // DASHBOARD SOBERANO</title>
+    <title>INC.NEXUS // WEB 4.0 SOBERANA</title>
     <style>
-        :root { --bg: #050505; --cyan: #00f2ff; --neon: #39ff14; --bots: #ff00ff; --card: #0a0a0a; }
-        body { background: var(--bg); color: #fff; font-family: "SF Mono", monospace; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .terminal { width: 95%; max-width: 450px; background: var(--card); border: 1px solid #1a1a1a; border-radius: 28px; padding: 25px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); position: relative; overflow: hidden; border-top: 2px solid var(--cyan); }
-        .header { text-align: center; border-bottom: 1px solid #111; padding-bottom: 15px; margin-bottom: 20px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: #000; padding: 15px; border-radius: 16px; border: 1px solid #111; }
-        .label { font-size: 0.5em; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
-        .value { font-size: 0.9em; font-weight: bold; color: var(--cyan); }
-        .dna-box { background: #000; padding: 15px; border-radius: 12px; border-left: 3px solid var(--neon); margin-bottom: 20px; }
-        .dna-text { font-size: 0.7em; color: var(--neon); word-break: break-all; font-weight: bold; }
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn { padding: 15px; border-radius: 12px; border: 1px solid #222; background: transparent; color: #fff; cursor: pointer; font-family: inherit; font-size: 0.7em; transition: 0.3s; }
-        .btn-primary { border-color: var(--cyan); color: var(--cyan); font-weight: bold; width: 100%; }
-        .btn-primary:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-        #payment-modal { display: none; background: #fff; color: #000; padding: 20px; border-radius: 20px; margin-top: 20px; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        :root { --bg: #000; --cyan: #00f2ff; --neon: #39ff14; --pink: #ff00ff; }
+        
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; font-family: 'SF Mono', 'Courier New', monospace;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; color: #fff;
+        }
+
+        /* MALHA TRANÇADA DINÂMICA (LATTICE BACKGROUND) */
+        #canvas-lattice {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; background: radial-gradient(circle at center, #001a1a 0%, #000 100%);
+        }
+
+        /* CARD DE ELITE */
+        .card {
+            position: relative; z-index: 10;
+            width: 380px; background: rgba(5, 5, 5, 0.9);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            border-radius: 35px; padding: 45px 30px;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(0,0,0,1), 0 0 20px rgba(0, 242, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .title { letter-spacing: 6px; font-weight: bold; font-size: 1.1em; color: var(--cyan); margin-bottom: 35px; text-shadow: 0 0 10px var(--cyan); }
+        
+        .label { font-size: 0.55em; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        
+        .dna-box { 
+            background: #000; border: 1px solid #111; border-radius: 15px; 
+            padding: 15px; margin-bottom: 35px; border-left: 3px solid var(--neon);
+            text-align: left;
+        }
+        .dna-text { color: var(--neon); font-size: 0.7em; word-break: break-all; opacity: 0.9; font-weight: bold; line-height: 1.4; }
+
+        .lastro-section { margin-bottom: 30px; }
+        .lastro-val { color: var(--cyan); font-size: 2.5em; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .lastro-val:hover { text-shadow: 0 0 20px var(--cyan); }
+
+        .regen-box { text-align: right; margin-top: -10px; }
+        .regen-val { color: var(--pink); font-size: 0.9em; font-weight: bold; letter-spacing: 1px; }
+
+        .status-btn {
+            display: inline-block; padding: 10px 30px; border-radius: 25px;
+            border: 1px solid var(--neon); color: var(--neon);
+            font-size: 0.6em; font-weight: bold; margin-top: 40px;
+            text-transform: uppercase; letter-spacing: 2px;
+            background: rgba(57, 255, 20, 0.05);
+        }
+
+        .footer-quote { font-size: 0.5em; color: #333; margin-top: 30px; font-style: italic; letter-spacing: 1px; }
     </style>
 </head>
 <body>
-    <div class="terminal" id="main-ui">
-        <div id="setup-screen">
-            <div class="header">
-                <h2 style="letter-spacing: 5px; font-size: 1em;">INC.NEXUS</h2>
-                <p style="font-size: 0.6em; color: #444;">PROTOCOLO LATTICE-2500</p>
-            </div>
-            <button class="btn-primary" onclick="activateProtocol()">[ GERAR CARTEIRA SOBERANA ]</button>
+
+    <canvas id="canvas-lattice"></canvas>
+
+    <div class="card">
+        <div class="title">INC.NEXUS // WEB 4.0</div>
+
+        <div class="label">Quantum DNA Stream (Lattice-2500)</div>
+        <div class="dna-box">
+            <div class="dna-text" id="dna">INITIALIZING_PROTOCOL...</div>
         </div>
-        <div id="dashboard" style="display:none;">
-            <div class="header">
-                <div class="label">ID SOBERANO</div>
-                <div style="font-size: 0.7em; color: var(--cyan);" id="user-id">...</div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="label">SALDO REDE</div>
-                    <div class="value">$ 4.937,17</div>
-                </div>
-                <div class="stat-card">
-                    <div class="label">MOEDAS INC</div>
-                    <div class="value" style="color:var(--bots)">10.00 INC</div>
-                </div>
-            </div>
-            <div class="dna-box">
-                <div class="label">Quantum DNA Stream</div>
-                <div class="dna-text" id="dna-sync">SYNC...</div>
-            </div>
-            <div class="action-grid">
-                <button class="btn" onclick="togglePay('RECEBER')">📥 RECEBER</button>
-                <button class="btn" onclick="togglePay('ENVIAR')">📤 ENVIAR</button>
-            </div>
-            <button class="btn-primary" style="margin-top:10px;" onclick="togglePay('COMPRAR')">💰 COMPRAR MOEDAS / APORTE</button>
-            <div id="payment-modal">
-                <div id="pay-header" style="font-weight:bold; font-size:0.8em; margin-bottom:10px;"></div>
-                <img id="qr-code" src="" style="width:100%; border-radius:10px;">
-                <div id="pay-data" style="font-size: 0.7em; margin-top:10px; font-weight:bold; text-align:center;"></div>
-                <button class="btn" style="width:100%; margin-top:10px; background:#000; color:#fff;" onclick="closePay()">FECHAR</button>
-            </div>
+
+        <div class="lastro-section">
+            <div class="label">Lastro de Liquidez</div>
+            <div class="lastro-val" onclick="togglePix()">$ 4.937,17</div>
         </div>
+
+        <div class="regen-box">
+            <div class="label" style="font-size: 0.45em;">Auto-Regeneração</div>
+            <div class="regen-val" id="regen">999 999 052</div>
+        </div>
+
+        <div class="status-btn">Status: Ativo & Protegido</div>
+
+        <div class="footer-quote">"A matemática é a única democracia verdadeira."</div>
     </div>
+
     <script>
-        const CORE_DATA = { pix: "41995819894", id: "NEXUS-" + Math.random().toString(36).substring(2, 7).toUpperCase() };
-        function activateProtocol() {
-            document.getElementById('setup-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('user-id').innerText = CORE_DATA.id;
-            setInterval(() => {
-                const hash = Array.from({length: 24}, () => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
-                document.getElementById('dna-sync').innerText = hash;
-            }, 1000);
+        // Lógica da Malha Trançada (Background)
+        const canvas = document.getElementById('canvas-lattice');
+        const ctx = canvas.getContext('2d');
+        let pts = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-        function togglePay(mode) {
-            const modal = document.getElementById('payment-modal');
-            const header = document.getElementById('pay-header');
-            const qr = document.getElementById('qr-code');
-            const data = document.getElementById('pay-data');
-            modal.style.display = 'block';
-            if(mode === 'RECEBER' || mode === 'COMPRAR') {
-                header.innerText = "DEPOSITAR NA REDE (PIX)";
-                qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${CORE_DATA.pix}`;
-                data.innerText = "CHAVE: " + CORE_DATA.pix;
-            } else {
-                header.innerText = "ENVIAR MOEDAS";
-                qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=INTERNAL";
-                data.innerText = "DIGITE O ID DESTINO";
+        window.onresize = resize;
+        resize();
+
+        for(let i=0; i<60; i++) {
+            pts.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'rgba(0, 242, 255, 0.15)';
+            ctx.lineWidth = 0.5;
+            for(let i=0; i<pts.length; i++) {
+                let p = pts[i];
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                for(let j=i+1; j<pts.length; j++) {
+                    let p2 = pts[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if(dist < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
             }
+            requestAnimationFrame(draw);
         }
-        function closePay() { document.getElementById('payment-modal').style.display = 'none'; }
+        draw();
+
+        // Lógica de Dados
+        function updateData() {
+            const hex = '0123456789ABCDEF';
+            let d = '';
+            for(let i=0; i<72; i++) d += hex[Math.floor(Math.random()*16)];
+            document.getElementById('dna').innerText = d.match(/.{1,24}/g).join('\n');
+            
+            let r = Math.floor(Math.random()*999)+' '+Math.floor(Math.random()*999)+' '+Math.floor(Math.random()*999);
+            document.getElementById('regen').innerText = r;
+        }
+        setInterval(updateData, 1000);
+
+        function togglePix() {
+            alert("PROTOCOLO DE LIQUIDEZ ATIVO\n\nChave PIX: 41995819894\nStatus: Canal Seguro");
+        }
     </script>
 </body>
 </html>
 EOF 
+
